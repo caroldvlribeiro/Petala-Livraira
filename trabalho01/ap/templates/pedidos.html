@@ -1,0 +1,6 @@
+{% extends 'template.html' %}
+{% block titulo %}Meus pedidos | Pétala{% endblock %}
+{% block conteudo %}
+<div class="page-heading"><div><p class="eyebrow">Histórico</p><h1>Meus pedidos</h1><p class="muted">Acompanhe suas histórias a caminho.</p></div></div>
+<div class="orders">{% for pedido in pedidos %}<article class="order card"><div class="order-head"><strong>Pedido #{{ pedido.id }}</strong><span class="badge">{{ pedido.get_status_display }}</span></div>{% for item in pedido.itens.all %}<p>{{ item.quantidade }}× {{ item.livro.nome }} <span class="muted">· R$ {{ item.subtotal|floatformat:2 }}</span></p>{% endfor %}<p class="summary-total"><span>Total · {{ pedido.criado_em|date:"d/m/Y H:i" }}</span><strong>R$ {{ pedido.total|floatformat:2 }}</strong></p></article>{% empty %}<div class="card" style="padding:28px"><p>Você ainda não fez nenhum pedido.</p><a class="button" style="margin-top:15px" href="{% url 'servicos' %}">Encontrar um livro</a></div>{% endfor %}</div>
+{% endblock %}

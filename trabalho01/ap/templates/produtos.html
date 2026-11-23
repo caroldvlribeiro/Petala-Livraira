@@ -1,0 +1,13 @@
+{% extends 'template.html' %}
+{% block titulo %}Descobrir livros | Pétala{% endblock %}
+{% block conteudo %}
+<div class="page-heading"><div><p class="eyebrow">Curadoria digital</p><h1>Descobrir livros</h1><p class="muted">Uma janela para novas histórias, consultada na Open Library.</p></div></div>
+{% if api_erro %}<p class="flash-warning flash-messages">{{ api_erro }}</p>{% endif %}
+<div class="book-grid">
+{% for livro in produtos_api %}
+<article class="book-card card">{% if livro.image %}<img class="book-cover" src="{{ livro.image }}" alt="Capa de {{ livro.title }}">{% else %}<div class="cover-placeholder">✿</div>{% endif %}<div class="book-info"><h3>{{ livro.title }}</h3><p class="book-author">{{ livro.author }}{% if livro.year %} · {{ livro.year }}{% endif %}</p><p class="book-price">R$ 20,00</p><form method="post" action="{% url 'adicionar_api_carrinho' %}">{% csrf_token %}<input type="hidden" name="key" value="{{ livro.key }}"><input type="hidden" name="title" value="{{ livro.title }}"><input type="hidden" name="author" value="{{ livro.author }}"><input type="hidden" name="year" value="{{ livro.year }}"><input type="hidden" name="image" value="{{ livro.image }}"><input type="hidden" name="next" value="{% url 'produtos' %}"><button class="button" type="submit">Adicionar à sacola</button></form></div></article>
+{% empty %}<p class="muted">Não foi possível carregar recomendações agora.</p>{% endfor %}
+</div>
+<div class="page-heading" style="margin-top:42px"><div><p class="eyebrow">Estante local</p><h2>Livros disponíveis</h2></div><a class="button" href="{% url 'servicos' %}">Ver catálogo</a></div>
+<div class="book-grid">{% for livro in livros %}<article class="book-card card">{% if livro.imagem %}<img class="book-cover" src="{{ livro.imagem.url }}" alt="Capa de {{ livro.nome }}">{% else %}<div class="cover-placeholder">✿</div>{% endif %}<div class="book-info"><h3>{{ livro.nome }}</h3><p class="book-author">{{ livro.autor|default:"Pétala Livraria" }}</p><p class="book-price">R$ {{ livro.preco|floatformat:2 }}</p><form method="post" action="{% url 'adicionar_carrinho' livro.id %}">{% csrf_token %}<input type="hidden" name="next" value="{% url 'produtos' %}"><button class="button" type="submit">Adicionar</button></form></div></article>{% empty %}<p class="muted">Nenhum livro cadastrado.</p>{% endfor %}</div>
+{% endblock %}

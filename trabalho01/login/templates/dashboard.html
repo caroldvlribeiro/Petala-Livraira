@@ -1,0 +1,5 @@
+{% extends "template.html" %}
+{% block titulo %}Minha conta | Pétala{% endblock %}
+{% block conteudo %}
+<section class="hero"><div><p class="eyebrow">Minha conta</p><h1>Olá, {{ user.first_name|default:user.username }}.</h1><p>Seu espaço para cuidar dos dados da conta e acompanhar as leituras que estão chegando.</p><div style="display:flex;gap:10px;flex-wrap:wrap"><a class="button button-light" href="{% url 'perfil' %}">Editar perfil</a><a class="button button-light" href="{% url 'pedidos' %}">Ver pedidos</a>{% if user.is_staff or user.perfil.tipo_usuario == 'administrador' %}<a class="button" href="{% url 'servicos' %}">Gerenciar catálogo</a><a class="button button-light" href="{% url 'integrantes' %}">Gerenciar vendedores</a>{% endif %}</div></div><div class="hero-art">✿</div></section>
+{% endblock %}

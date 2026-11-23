@@ -1,0 +1,87 @@
+.contatos-titulo {
+    text-align: center;
+    font-size: 2.3rem;
+    font-weight: 700;
+    margin: 15px 0 26px;
+    color: var(--green-900);
+}
+
+.tabela-contatos {
+    max-width: 980px;
+    margin: 0 auto;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--card);
+    box-shadow: 0 12px 28px rgba(18, 59, 47, .08);
+}
+
+.tabela-contatos table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.tabela-contatos th,
+.tabela-contatos td {
+    border-bottom: 1px solid var(--line);
+    border-right: 0;
+    border-left: 0;
+    border-top: 0;
+    padding: 14px 12px;
+    text-align: left;
+    vertical-align: top;
+    font-size: 1rem;
+    color: var(--ink);
+    word-wrap: break-word;
+}
+
+.tabela-contatos thead th {
+    background: var(--green-900);
+    color: #ffffff;
+    font-weight: 700;
+    text-align: center;
+}
+
+.tabela-contatos tbody td {
+    background: var(--card);
+}
+
+.tabela-contatos tbody tr:nth-child(even) td {
+    background: #f5faf7;
+}
+
+/* Botões de ação — padrão consistente com servicos.css */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 82px;
+    height: 34px;
+    padding: 0 14px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-align: center;
+    color: #fff;
+    transition: opacity 0.2s ease;
+}
+
+.btn:hover {
+    opacity: 0.9;
+}
+
+.btn-excluir {
+    background: #c64d4d;
+}
+
+@media (max-width: 900px) {
+    .tabela-contatos {
+        overflow-x: auto;
+    }
+
+    .tabela-contatos table {
+        min-width: 700px;
+    }
+}

@@ -1,0 +1,60 @@
+{% extends 'template.html' %}
+{% block titulo %}Sacola | Pétala{% endblock %}
+{% block conteudo %}
+<div class="page-heading">
+    <div><p class="eyebrow">Seu cantinho</p><h1>Sacola</h1></div>
+</div>
+<div class="two-column">
+    <section class="cart-list">
+        {% for item in itens %}
+        <article class="cart-item card">
+            {% if item.livro.imagem %}<img src="{{ item.livro.imagem.url }}" alt="" class="cart-item img">
+            {% else %}<div class="cart-cover">✿</div>{% endif %}
+            <div class="grow">
+                <h3>{{ item.livro.nome }}</h3>
+                <p class="muted">{{ item.quantidade }} unidade(s) · R$ {{ item.livro.preco|floatformat:2 }}</p>
+            </div>
+            <strong>R$ {{ item.subtotal|floatformat:2 }}</strong>
+            <form method="post" action="{% url 'remover_carrinho' item.livro.id %}">
+                {% csrf_token %}<button class="button button-light" type="submit">Remover</button>
+            </form>
+        </article>
+        {% endfor %}
+        {% for item in itens_api %}
+        <article class="cart-item card">
+            {% if item.image %}<img src="{{ item.image }}" alt="" class="cart-item img">
+            {% else %}<div class="cart-cover">✿</div>{% endif %}
+            <div class="grow">
+                <h3>{{ item.title }}</h3>
+                <p class="muted">{{ item.author }}{% if item.year %} · {{ item.year }}{% endif %}</p>
+                <p class="muted">Recomendação da Open Library · R$ {{ item.preco|floatformat:2 }} · {{ item.quantidade }} unidade(s)</p>
+            </div>
+            <strong>R$ {{ item.subtotal|floatformat:2 }}</strong>
+            <form method="post" action="{% url 'remover_api_carrinho' item.key %}">
+                {% csrf_token %}<button class="button button-light" type="submit">Remover</button>
+            </form>
+        </article>
+        {% endfor %}
+        {% if not itens and not itens_api %}
+        <div class="card" style="padding:28px">
+            <p>Sua sacola está esperando uma boa história.</p>
+            <a class="button" style="margin-top:15px" href="{% url 'produtos' %}">Explorar recomendações</a>
+        </div>
+        {% endif %}
+    </section>
+    {% if itens or itens_api %}
+    <aside class="summary card">
+        <h2>Resumo da sacola</h2>
+        <div class="summary-total"><span>Total</span><span>R$ {{ total|floatformat:2 }}</span></div>
+        {% if itens %}
+        <form method="post" action="{% url 'finalizar_pedido' %}">
+            {% csrf_token %}<button class="button" style="width:100%;justify-content:center" type="submit">Finalizar pedido</button>
+        </form>
+        {% endif %}
+        {% if itens_api %}
+        <p class="muted" style="margin-top:12px">Itens externos usam o preço padrão de R$ 20,00.</p>
+        {% endif %}
+    </aside>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,45 @@
+# Como executar o projeto
+
+# 1. Entre na pasta do projeto.
+cd trabalho01
+
+# 2. Crie o ambiente virtual dentro da pasta do projeto.
+python -m venv venv
+
+# 3. Ative o ambiente virtual.
+# CMD:
+venv\Scripts\activate
+# PowerShell:
+.\venv\Scripts\Activate.ps1
+
+# 4. Instale as dependências do projeto.
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+
+# 5. Atualize o banco local (inclui pedidos, itens e dados de livros).
+python manage.py migrate
+
+# 6. Inicie o servidor do projeto.
+python manage.py runserver
+
+# Alternativa no Windows:
+# Dê duplo clique em iniciar.bat. Ele cria o ambiente virtual,
+# instala as dependências, aplica as migrações e inicia o servidor.
+
+# Para usar a página de integrantes, crie um arquivo .env nesta pasta com:
+# SUPABASE_URL=sua_url_do_supabase
+# SUPABASE_KEY=sua_chave_do_supabase
+#
+# O dashboard e as demais páginas não dependem dessa configuração.
+# A página Descobrir livros consulta a Open Library quando houver conexão.
+# O catálogo local é gerenciado em Catálogo; pedidos são finalizados pela Sacola.
+# No cadastro, selecione Vendedor para permitir o cadastro de livros e aparecer na equipe.
+# Com o Supabase configurado, o vendedor também é sincronizado automaticamente em integrantes.
+# Para acesso ao gerenciamento, crie um administrador com:
+# python manage.py createsuperuser
+
+# Observação:
+# - Se estiver usando PowerShell e receber erro de execução de script, rode:
+# Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+# - O comando acima deve ser executado dentro da pasta "trabalho01".
+# - Se você estiver na raiz do repositório, primeiro use: cd .\trabalho01

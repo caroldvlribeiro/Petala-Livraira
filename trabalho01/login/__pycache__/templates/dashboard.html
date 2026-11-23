@@ -1,0 +1,14 @@
+{% extends "template.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+    <h1>Dashboard</h1>
+    <p>Bem Vindo <strong>{{ user.username }}</strong>!</p>
+
+    <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <input type="submit" value="Logout">
+    </form>
+    
+{% endblock %}

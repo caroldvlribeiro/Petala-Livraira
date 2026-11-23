@@ -1,0 +1,27 @@
+{% extends 'template.html' %}
+{% block titulo %}Pétala Livraria{% endblock %}
+{% block conteudo %}
+<section class="hero">
+    <div>
+        <p class="eyebrow">Leituras que florescem</p>
+        <h1>Um livro para cada parte de você.</h1>
+        <p>Na Pétala, histórias encontram pessoas. Descubra novos mundos, autores marcantes e aquele livro que chega na hora certa.</p>
+        <a class="button button-light" href="{% url 'produtos' %}">Explorar a estante</a>
+    </div>
+    <div class="hero-art" aria-hidden="true">❦</div>
+</section>
+<div class="page-heading">
+    <div><p class="eyebrow">Nossa seleção</p><h2>Favoritos da casa</h2></div>
+    <a class="button button-light" href="{% url 'servicos' %}">Ver catálogo completo</a>
+</div>
+<div class="book-grid">
+    {% for livro in livros_destaque %}
+    <article class="book-card card">
+        {% if livro.imagem %}<img class="book-cover" src="{{ livro.imagem.url }}" alt="Capa de {{ livro.nome }}">
+        {% else %}<div class="cover-placeholder" aria-hidden="true">✿</div>{% endif %}
+        <div class="book-info"><h3>{{ livro.nome }}</h3><p class="book-author">{{ livro.autor|default:"Edição Pétala" }}</p><p class="book-price">R$ {{ livro.preco|floatformat:2 }}</p>
+        <form method="post" action="{% url 'adicionar_carrinho' livro.id %}">{% csrf_token %}<input type="hidden" name="next" value="{% url 'index' %}"><button class="button" type="submit">Adicionar à sacola</button></form></div>
+    </article>
+    {% empty %}<p class="muted">Nossa estante está sendo preparada. Volte em breve.</p>{% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block titulo %}Pétala Livraria{% endblock %}</title>
+    <link rel="icon" href="{% static 'images/petala.svg' %}" type="image/svg+xml">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block estilos %}{% endblock %}
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <a class="brand-link" href="{% url 'index' %}">
+                <span class="brand-mark">✿</span>
+                <span><strong>Pétala</strong><small>Livraria</small></span>
+            </a>
+            <nav class="side-nav" aria-label="Navegação principal">
+                <a href="{% url 'index' %}" class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">⌂ <span>Início</span></a>
+                <a href="{% url 'produtos' %}" class="{% if request.resolver_match.url_name == 'produtos' %}active{% endif %}">▣ <span>Descobrir livros</span></a>
+                <a href="{% url 'servicos' %}" class="{% if request.resolver_match.url_name == 'servicos' %}active{% endif %}">▤ <span>Catálogo</span></a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'pedidos' %}" class="{% if request.resolver_match.url_name == 'pedidos' %}active{% endif %}">◷ <span>Meus pedidos</span></a>
+                    <a href="{% url 'dashboard' %}">◎ <span>Minha conta</span></a>
+                {% endif %}
+                <a href="{% url 'novoContato' %}">♡ <span>Fale conosco</span></a>
+                <a href="{% url 'integrantes' %}">♧ <span>Nossa equipe</span></a>
+            </nav>
+            <div class="sidebar-bottom">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'carrinho' %}" class="cart-link">🛍 <span>Sacola</span></a>
+                {% else %}
+                    <a href="{% url 'login' %}?next={% url 'carrinho' %}" class="cart-link">🛍 <span>Sacola</span></a>
+                {% endif %}
+                {% if user.is_authenticated %}
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}<button class="logout-link" type="submit">↪ <span>Sair</span></button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}">↪ <span>Entrar</span></a>
+                {% endif %}
+            </div>
+        </aside>
+        <main class="main-content">
+            <div class="mobile-header">
+                <a class="brand-link" href="{% url 'index' %}"><span class="brand-mark">✿</span><strong>Pétala</strong></a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'carrinho' %}" class="mobile-cart">🛍</a>
+                {% else %}
+                    <a href="{% url 'login' %}?next={% url 'carrinho' %}" class="mobile-cart">🛍</a>
+                {% endif %}
+            </div>
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for message in messages %}<p class="flash-{{ message.tags }}">{{ message }}</p>{% endfor %}
+                </div>
+            {% endif %}
+            {% block conteudo %}{% endblock %}
+        </main>
+    </div>
+</body>
+</html>

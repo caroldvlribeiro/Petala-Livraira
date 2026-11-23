@@ -1,0 +1,8 @@
+{% extends "template.html" %}
+{% block titulo %}Entrar | Pétala{% endblock %}
+{% block conteudo %}
+<section class="form-card card" style="max-width:520px;margin:auto"><p class="eyebrow">Bem-vindo de volta</p><h1>Entrar na Pétala</h1><p class="muted" style="margin:8px 0 20px">Acesse sua estante e acompanhe seus pedidos.</p>
+{% for message in messages %}<p class="flash-{{ message.tags }} flash-messages">{{ message }}</p>{% endfor %}
+<form method="post">{% csrf_token %}{{ form.as_p }}{% if form.errors %}<p class="flash-error flash-messages">Usuário ou senha inválidos.</p>{% endif %}<button class="button" type="submit">Entrar</button></form>
+<p class="muted" style="margin-top:16px"><a href="{% url 'password_reset' %}">Esqueci minha senha</a> · <a href="{% url 'cadastrar_usuario' %}">Criar conta</a></p></section>
+{% endblock %}

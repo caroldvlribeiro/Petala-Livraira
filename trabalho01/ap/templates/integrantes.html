@@ -1,0 +1,55 @@
+{% extends 'template.html' %}
+
+{% load static %}
+
+{% block titulo %} Integrantes {% endblock %}
+
+{% block estilos %}
+<link rel="stylesheet" href="{% static 'css/integrantes.css' %}">
+{% endblock %}
+
+{% block conteudo %}
+    <h2 class="integrantes-titulo">Nossa Equipe</h2>
+
+    {% if integrantes_erro %}
+        <p class="flash-warning flash-messages">{{ integrantes_erro }}</p>
+    {% endif %}
+
+    <div class="integrantes-container">
+        {% for integrante in integrantes %}
+            <div class="integrante-card">
+                {% if integrante.foto_url %}
+                    <img src="{{ integrante.foto_url }}" alt="{{ integrante.nome }}" class="integrante-foto">
+                {% else %}
+                    <div class="integrante-avatar" aria-hidden="true">{{ integrante.nome|first|upper }}</div>
+                {% endif %}
+                <div class="integrante-info">
+                    <p class="integrante-nome">{{ integrante.nome }}</p>
+                    <p class="integrante-cargo">{{ integrante.cargo }}</p>
+                    <p class="integrante-bio">{{ integrante.biografia }}</p>
+                </div>
+                {% if user.is_authenticated and user.perfil.tipo_usuario == 'administrador' or user.is_staff %}
+                    {% if integrante.id %}
+                        <a href="{% url 'editarIntegrante' integrante.id %}" class="btn-adicionar">Editar</a>
+                        <form method="POST" action="{% url 'delIntegrante' integrante.id %}" onsubmit="return confirm('Deseja realmente excluir este integrante?')">
+                            {% csrf_token %}
+                            <button type="submit">Excluir</button>
+                        </form>
+                    {% elif integrante.vendedor and integrante.usuario_id %}
+                        <form method="POST" action="{% url 'excluirVendedor' integrante.usuario_id %}" onsubmit="return confirm('Deseja excluir este vendedor e sua conta?')">
+                            {% csrf_token %}
+                            <button type="submit">Excluir vendedor</button>
+                        </form>
+                    {% endif %}
+                {% endif %}
+            </div>
+        {% empty %}
+            <p class="integrantes-vazio">Nenhum integrante cadastrado.</p>
+        {% endfor %}
+    </div>
+    {% if user.is_staff or user.is_authenticated and user.perfil.tipo_usuario == 'administrador' %}
+        <div class="acao-adicionar">
+            <a href="{% url 'addIntegrante' %}" class="btn-adicionar">+ Adicionar Integrante</a>
+        </div>
+    {% endif %}
+{% endblock %}
