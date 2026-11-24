@@ -121,6 +121,22 @@ class VendedorTests(TestCase):
         self.client.force_login(usuario)
         self.assertEqual(self.client.get(reverse("addServico")).status_code, 200)
 
+    def test_perfil_de_vendedor_pode_salvar_link_da_foto(self):
+        vendedor = self.criar_vendedor("vendedora_foto")
+        self.client.force_login(vendedor)
+        foto = "https://example.com/foto-vendedora.jpg"
+
+        response = self.client.post(reverse("perfil"), {
+            "first_name": "Ana",
+            "last_name": "Silva",
+            "email": "ana@example.com",
+            "foto_url": foto,
+        })
+
+        self.assertEqual(response.status_code, 200)
+        vendedor.perfil.refresh_from_db()
+        self.assertEqual(vendedor.perfil.foto_url, foto)
+
     def test_cliente_nao_pode_acessar_formulario_de_livro(self):
         cliente = User.objects.create_user(username='cliente', password='senha-forte-123')
         Perfil.objects.create(usuario=cliente, tipo_usuario='cliente')
