@@ -10,9 +10,43 @@
     {% block estilos %}{% endblock %}
 </head>
 <body>
+    <!-- Overlay Backdrop para o Menu Hambúrguer (Drawer) -->
+    <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+    <!-- Header com Menu Hambúrguer (ativo a partir de 1100px) -->
+    <header class="responsive-header">
+        <div class="header-left">
+            <button class="hamburger-btn" id="menuToggle" aria-label="Abrir menu de navegação" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <a class="header-brand" href="{% url 'index' %}">
+                <span class="brand-mark">✿</span>
+                <span><strong>Pétala</strong> <small style="font-weight: 500; font-size: 0.8rem; color: var(--burgundy);">Livraria</small></span>
+            </a>
+        </div>
+        <div class="header-right">
+            {% if user.is_authenticated %}
+                <a href="{% url 'carrinho' %}" class="header-cart" title="Ver Sacola">🛍 <span>Sacola</span></a>
+                <a href="{% url 'dashboard' %}" class="header-user" title="Minha Conta">◎</a>
+            {% else %}
+                <a href="{% url 'login' %}?next={% url 'carrinho' %}" class="header-cart" title="Ver Sacola">🛍</a>
+                <a href="{% url 'login' %}" class="header-user" style="font-size: 0.85rem;">Entrar</a>
+            {% endif %}
+        </div>
+    </header>
+
     <div class="app-shell">
-        <aside class="sidebar">
-            <a class="brand-link" href="{% url 'index' %}">
+        <aside class="sidebar" id="navSidebar">
+            <div class="drawer-header">
+                <a class="brand-link" href="{% url 'index' %}" style="margin: 0;">
+                    <span class="brand-mark">✿</span>
+                    <span><strong>Pétala</strong><small>Livraria</small></span>
+                </a>
+                <button class="drawer-close" id="drawerClose" aria-label="Fechar menu">✕</button>
+            </div>
+            <a class="brand-link desktop-brand" href="{% url 'index' %}">
                 <span class="brand-mark">✿</span>
                 <span><strong>Pétala</strong><small>Livraria</small></span>
             </a>
@@ -174,5 +208,47 @@
             </div>
         </div>
     </footer>
+
+    <!-- Script de Controle do Menu Hambúrguer Off-Canvas -->
+    <script>
+        (function() {
+            const toggleBtn = document.getElementById('menuToggle');
+            const closeBtn = document.getElementById('drawerClose');
+            const sidebar = document.getElementById('navSidebar');
+            const backdrop = document.getElementById('drawerBackdrop');
+
+            function openDrawer() {
+                if (!sidebar) return;
+                sidebar.classList.add('is-open');
+                if (backdrop) backdrop.classList.add('is-open');
+                document.body.style.overflow = 'hidden';
+                if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'true');
+            }
+
+            function closeDrawer() {
+                if (!sidebar) return;
+                sidebar.classList.remove('is-open');
+                if (backdrop) backdrop.classList.remove('is-open');
+                document.body.style.overflow = '';
+                if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'false');
+            }
+
+            if (toggleBtn) toggleBtn.addEventListener('click', openDrawer);
+            if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+            if (backdrop) backdrop.addEventListener('click', closeDrawer);
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && sidebar && sidebar.classList.contains('is-open')) {
+                    closeDrawer();
+                }
+            });
+
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 1100 && sidebar && sidebar.classList.contains('is-open')) {
+                    closeDrawer();
+                }
+            });
+        })();
+    </script>
 </body>
 </html>
