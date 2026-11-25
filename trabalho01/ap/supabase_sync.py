@@ -1,4 +1,6 @@
 import logging
+import os
+from pathlib import Path
 
 from .supabase_client import supabase
 
@@ -15,6 +17,26 @@ def _execute(operation, descricao):
     except Exception as exc:
         logger.exception("Falha ao sincronizar %s no Supabase.", descricao)
         return False
+
+
+def upload_imagem_storage(livro):
+    if supabase is None or not livro.imagem:
+        return None
+    try:
+        nome_arquivo = f"capas/{livro.id}_{Path(livro.imagem.name).name}"
+        caminho_local = getattr(livro.imagem, "path", None)
+        if caminho_local and os.path.exists(caminho_local):
+            with open(caminho_local, "rb") as f:
+                dados = f.read()
+            supabase.storage.from_("livros").upload(
+                path=nome_arquivo,
+                file=dados,
+                file_options={"upsert": "true"}
+            )
+            return supabase.storage.from_("livros").get_public_url(nome_arquivo)
+    except Exception as exc:
+        logger.warning("Falha ao enviar capa para o Supabase Storage: %s", exc)
+    return None
 
 
 def sincronizar_perfil(usuario, perfil):
@@ -60,12 +82,13 @@ def remover_categoria(categoria_id):
 
 def sincronizar_livro(livro):
     def salvar():
+        url_imagem = upload_imagem_storage(livro) or (livro.imagem.url if livro.imagem else None)
         supabase.table("livros").upsert({
             "django_id": livro.id,
             "nome": livro.nome,
             "descricao": livro.descricao,
             "preco": str(livro.preco),
-            "imagem": livro.imagem.url if livro.imagem else None,
+            "imagem": url_imagem,
             "autor": livro.autor,
             "isbn": livro.isbn,
             "estoque": livro.estoque,

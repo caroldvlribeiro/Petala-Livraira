@@ -1,31 +1,56 @@
 const categorias = JSON.parse(document.getElementById('categorias').textContent);
-    const quantidades = JSON.parse(document.getElementById('quantidades').textContent);
-    const statusValores = JSON.parse(document.getElementById('status-valores').textContent);
+const quantidades = JSON.parse(document.getElementById('quantidades').textContent);
+const statusValores = JSON.parse(document.getElementById('status-valores').textContent);
 
-    new Chart(document.getElementById('graficoCategorias'),{
+if (document.getElementById('graficoCategorias')) {
+    new Chart(document.getElementById('graficoCategorias'), {
         type: 'bar',
         data: {
             labels: categorias,
-            datasets:[{
-                label: 'Serviços por categoria',
+            datasets: [{
+                label: 'Livros por Categoria',
                 data: quantidades,
-                backgroundColor: '#1e6b4f'
+                backgroundColor: '#5C1F2E',
+                borderColor: '#431420',
+                borderWidth: 1,
+                borderRadius: 6,
             }]
-
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    labels: { font: { family: "'Segoe UI', sans-serif", weight: 'bold' } }
+                }
+            }
         }
     });
+}
 
-    new Chart(document.getElementById('graficoStatus'),{
-        type:'doughnut',
+if (document.getElementById('graficoStatus')) {
+    new Chart(document.getElementById('graficoStatus'), {
+        type: 'doughnut',
         data: {
-            labels: ['Ativos', 'Inativos'],
-            datasets:[{
-                label: 'Serviços por status',
+            labels: ['Disponíveis (Ativos)', 'Indisponíveis (Inativos)'],
+            datasets: [{
+                label: 'Disponibilidade de Livros',
                 data: statusValores,
                 backgroundColor: [
-                    '#1e6b4f', 
-                    '#2f956d'
-                ]
+                    '#5C1F2E', 
+                    '#1B2A3D'
+                ],
+                borderWidth: 2
             }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { font: { family: "'Segoe UI', sans-serif" } }
+                }
+            }
         }
     });
+}

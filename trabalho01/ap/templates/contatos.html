@@ -2,39 +2,55 @@
 
 {% load static %}
 
-{% block titulo %} Contatos {% endblock %}
+{% block titulo %}Mensagens de Contato | Pétala Livraria{% endblock %}
 
 {% block estilos %}
 <link rel="stylesheet" href="{% static 'css/contatos.css' %}">
 {% endblock %}
 
 {% block conteudo %}
-    <h2 class="contatos-titulo">Nossos Contatos</h2>
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Atendimento e Mensagens</p>
+        <h1 class="contatos-titulo">Mensagens Recebidas</h1>
+        <p class="muted">Consulte as mensagens enviadas pelos visitantes e clientes através do formulário Fale Conosco.</p>
+    </div>
+</div>
 
-    <div class="tabela-contatos">
-        <table>
+<div class="tabela-contatos card" style="padding:24px;overflow-x:auto">
+    {% if contatos %}
+        <table style="width:100%;border-collapse:collapse">
             <thead>
-                <tr>
-                    <th>Nome</th>
-                    <th>E-mail</th>
-                    <th>Telefone</th>
-                    <th>Mensagem</th>
-                    <th>Ação</th>
+                <tr style="border-bottom:2px solid var(--line);text-align:left">
+                    <th style="padding:12px">Nome</th>
+                    <th style="padding:12px">E-mail</th>
+                    <th style="padding:12px">Telefone</th>
+                    <th style="padding:12px">Mensagem</th>
+                    <th style="padding:12px;text-align:center">Ação</th>
                 </tr>
             </thead>
             <tbody>
                 {% for contato in contatos %}
-                    <tr>
-                        <td>{{ contato.nome }}</td>
-                        <td>{{ contato.email }}</td>
-                        <td>{{ contato.telefone }}</td>
-                        <td>{{ contato.mensagem }}</td>
-                        <td>
-                            <a href="{% url 'excluirContato' contato.id %}" class="btn btn-excluir">Excluir</a>
+                    <tr style="border-bottom:1px solid var(--line)">
+                        <td style="padding:12px;font-weight:600">{{ contato.nome }}</td>
+                        <td style="padding:12px"><a href="mailto:{{ contato.email }}" style="color:var(--burgundy)">{{ contato.email }}</a></td>
+                        <td style="padding:12px">{{ contato.telefone|default:"Não informado" }}</td>
+                        <td style="padding:12px;max-width:380px">{{ contato.mensagem }}</td>
+                        <td style="padding:12px;text-align:center">
+                            <form method="POST" action="{% url 'excluirContato' contato.id %}" onsubmit="return confirm('Deseja realmente excluir esta mensagem?')">
+                                {% csrf_token %}
+                                <button type="submit" class="button" style="background:#b3261e;color:#fff;padding:6px 14px;font-size:0.85rem">Excluir</button>
+                            </form>
                         </td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
-    </div>
+    {% else %}
+        <div style="text-align:center;padding:32px 16px" class="muted">
+            <p style="font-size:1.1rem">Nenhuma mensagem recebida até o momento.</p>
+            <p style="margin-top:6px;font-size:0.9rem">Novos contatos enviados pelos leitores aparecerão listados aqui.</p>
+        </div>
+    {% endif %}
+</div>
 {% endblock %}

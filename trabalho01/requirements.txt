@@ -4,3 +4,7 @@ python-dotenv
 supabase
 Djangorestframework
 requests
+gunicorn
+whitenoise
+psycopg2-binary
+dj-database-url

@@ -22,7 +22,11 @@
                 <a href="{% url 'servicos' %}" class="{% if request.resolver_match.url_name == 'servicos' %}active{% endif %}">▤ <span>Catálogo</span></a>
                 {% if user.is_authenticated %}
                     <a href="{% url 'pedidos' %}" class="{% if request.resolver_match.url_name == 'pedidos' %}active{% endif %}">◷ <span>Meus pedidos</span></a>
-                    <a href="{% url 'dashboard' %}">◎ <span>Minha conta</span></a>
+                    <a href="{% url 'dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">◎ <span>Minha conta</span></a>
+                    {% if user.is_staff or user.perfil.tipo_usuario == 'administrador' %}
+                        <a href="{% url 'contatos' %}" class="{% if request.resolver_match.url_name == 'contatos' %}active{% endif %}">✉ <span>Mensagens</span></a>
+                        <a href="{% url 'relatorios' %}" class="{% if request.resolver_match.url_name == 'relatorios' %}active{% endif %}">📊 <span>Relatórios</span></a>
+                    {% endif %}
                 {% endif %}
                 <a href="{% url 'novoContato' %}">♡ <span>Fale conosco</span></a>
                 <a href="{% url 'integrantes' %}">♧ <span>Nossa equipe</span></a>

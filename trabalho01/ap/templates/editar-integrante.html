@@ -2,42 +2,53 @@
 
 {% load static %}
 
-{% block titulo %} Editar Integrante {% endblock %}
+{% block titulo %}Editar Integrante | Pétala Livraria{% endblock %}
 
 {% block estilos %}
 <link rel="stylesheet" href="{% static 'css/form-integrante.css' %}">
 {% endblock %}
 
 {% block conteudo %}
-
-    <h2 class="form-titulo">Editar Integrante</h2>
-
-    <div class="form-container">
-        <form method="post" class="integrante-form">
-            {% csrf_token %}
-
-            <div class="campo">
-                <label for="nome">Nome:</label>
-                <input type="text" id="nome" name="nome" value="{{ integrante.nome }}" placeholder="Nome completo" required>
-            </div>
-
-            <div class="campo">
-                <label for="cargo">Cargo:</label>
-                <input type="text" id="cargo" name="cargo" value="{{ integrante.cargo }}" placeholder="Ex: Desenvolvedor, Designer…" required>
-            </div>
-
-            <div class="campo">
-                <label for="biografia">Biografia:</label>
-                <textarea id="biografia" name="biografia" placeholder="Descreva brevemente este integrante…" required>{{ integrante.biografia }}</textarea>
-            </div>
-
-            <div class="campo">
-                <label for="foto_url">URL da Foto:</label>
-                <input type="url" id="foto_url" name="foto_url" value="{{ integrante.foto_url }}" placeholder="https://exemplo.com/foto.jpg">
-            </div>
-
-            <button type="submit">Salvar Alterações</button>
-        </form>
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Equipe Pétala</p>
+        <h1 class="form-titulo">Editar Integrante: {{ integrante.nome }}</h1>
+        <p class="muted">Atualize os dados deste membro no banco remoto do Supabase.</p>
     </div>
+</div>
 
+<div class="form-container card" style="max-width:680px;padding:28px">
+    <form method="post" class="integrante-form">
+        {% csrf_token %}
+
+        <div class="campo" style="margin-bottom:18px">
+            <label for="nome"><strong>Nome completo</strong> <span style="color:var(--burgundy)">*</span></label>
+            <input type="text" id="nome" name="nome" value="{{ integrante.nome }}" placeholder="Ex: Mariana Silva" class="campo-input" required>
+            <small class="muted" style="display:block;margin-top:4px;font-size:0.82rem">Informe o nome e sobrenome do integrante.</small>
+        </div>
+
+        <div class="campo" style="margin-bottom:18px">
+            <label for="cargo"><strong>Função ou Cargo</strong> <span style="color:var(--burgundy)">*</span></label>
+            <input type="text" id="cargo" name="cargo" value="{{ integrante.cargo }}" placeholder="Ex: Desenvolvedor, Curador Literário, Designer" class="campo-input" required>
+            <small class="muted" style="display:block;margin-top:4px;font-size:0.82rem">Papel desempenhado no projeto ou livraria.</small>
+        </div>
+
+        <div class="campo" style="margin-bottom:18px">
+            <label for="biografia"><strong>Biografia / Apresentação</strong> <span style="color:var(--burgundy)">*</span></label>
+            <textarea id="biografia" name="biografia" placeholder="Descreva brevemente a atuação deste integrante..." rows="4" class="campo-textarea" required>{{ integrante.biografia }}</textarea>
+            <small class="muted" style="display:block;margin-top:4px;font-size:0.82rem">Texto de 1 a 3 frases apresentado no card da equipe.</small>
+        </div>
+
+        <div class="campo" style="margin-bottom:18px">
+            <label for="foto_url"><strong>URL da Imagem de Perfil</strong></label>
+            <input type="url" id="foto_url" name="foto_url" value="{{ integrante.foto_url }}" placeholder="https://exemplo.com/fotos/integrante.jpg" class="campo-input">
+            <small class="muted" style="display:block;margin-top:4px;font-size:0.82rem">Opcional. Link direto da imagem (JPG ou PNG).</small>
+        </div>
+
+        <div style="display:flex;gap:12px;margin-top:24px;flex-wrap:wrap">
+            <button class="button" type="submit">Salvar Alterações</button>
+            <a class="button button-light" href="{% url 'integrantes' %}">Cancelar</a>
+        </div>
+    </form>
+</div>
 {% endblock %}

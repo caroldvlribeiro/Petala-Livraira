@@ -1,5 +1,95 @@
 {% extends "template.html" %}
-{% block titulo %}Minha conta | Pétala{% endblock %}
+
+{% block titulo %}Painel de Controle | Pétala Livraria{% endblock %}
+
 {% block conteudo %}
-<section class="hero"><div><p class="eyebrow">Minha conta</p><h1>Olá, {{ user.first_name|default:user.username }}.</h1><p>Seu espaço para cuidar dos dados da conta e acompanhar as leituras que estão chegando.</p><div style="display:flex;gap:10px;flex-wrap:wrap"><a class="button button-light" href="{% url 'perfil' %}">Editar perfil</a><a class="button button-light" href="{% url 'pedidos' %}">Ver pedidos</a>{% if user.is_staff or user.perfil.tipo_usuario == 'administrador' %}<a class="button" href="{% url 'servicos' %}">Gerenciar catálogo</a><a class="button button-light" href="{% url 'integrantes' %}">Gerenciar vendedores</a>{% endif %}</div></div><div class="hero-art">✿</div></section>
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Painel do Usuário</p>
+        <h1>Olá, {{ user.first_name|default:user.username }}!</h1>
+        <p class="muted">Bem-vindo(a) ao seu painel de controle. Escolha uma das opções abaixo para continuar.</p>
+    </div>
+</div>
+
+<div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));gap:20px;margin-top:10px">
+    <!-- Editar Perfil -->
+    <article class="card" style="padding:24px;display:flex;flex-direction:column;justify-content:space-between">
+        <div>
+            <p class="eyebrow" style="font-size:0.7rem;margin-bottom:6px">Minha Conta</p>
+            <h3 style="margin-bottom:8px">Editar Perfil</h3>
+            <p class="muted" style="font-size:0.88rem;line-height:1.5">Consulte e atualize seus dados pessoais, e-mail, foto e altere sua senha de acesso.</p>
+        </div>
+        <div style="margin-top:20px">
+            <a class="button button-light" style="width:100%;justify-content:center" href="{% url 'perfil' %}">Acessar perfil →</a>
+        </div>
+    </article>
+
+    <!-- Meus Pedidos -->
+    <article class="card" style="padding:24px;display:flex;flex-direction:column;justify-content:space-between">
+        <div>
+            <p class="eyebrow" style="font-size:0.7rem;margin-bottom:6px">Minhas Compras</p>
+            <h3 style="margin-bottom:8px">Meus Pedidos</h3>
+            <p class="muted" style="font-size:0.88rem;line-height:1.5">Acompanhe os pedidos realizados, status de preparação e histórico de compras.</p>
+        </div>
+        <div style="margin-top:20px">
+            <a class="button button-light" style="width:100%;justify-content:center" href="{% url 'pedidos' %}">Visualizar pedidos →</a>
+        </div>
+    </article>
+
+    <!-- Serviços / Catálogo (Vendedores e Admins) -->
+    {% if user.is_staff or user.perfil.tipo_usuario == 'administrador' or user.perfil.tipo_usuario == 'vendedor' %}
+    <article class="card" style="padding:24px;display:flex;flex-direction:column;justify-content:space-between">
+        <div>
+            <p class="eyebrow" style="font-size:0.7rem;margin-bottom:6px">Gerenciamento</p>
+            <h3 style="margin-bottom:8px">Catálogo & Livros</h3>
+            <p class="muted" style="font-size:0.88rem;line-height:1.5">Cadastre novos títulos, edite preços, estoque, sinopses e controle o catálogo.</p>
+        </div>
+        <div style="margin-top:20px">
+            <a class="button" style="width:100%;justify-content:center" href="{% url 'servicos' %}">Gerenciar catálogo →</a>
+        </div>
+    </article>
+    {% endif %}
+
+    <!-- Contatos (Staff e Admins) -->
+    {% if user.is_staff or user.perfil.tipo_usuario == 'administrador' %}
+    <article class="card" style="padding:24px;display:flex;flex-direction:column;justify-content:space-between">
+        <div>
+            <p class="eyebrow" style="font-size:0.7rem;margin-bottom:6px">Comunicação</p>
+            <h3 style="margin-bottom:8px">Mensagens de Contato</h3>
+            <p class="muted" style="font-size:0.88rem;line-height:1.5">Consulte e gerencie as mensagens enviadas pelos visitantes pelo formulário de contato.</p>
+        </div>
+        <div style="margin-top:20px">
+            <a class="button button-light" style="width:100%;justify-content:center" href="{% url 'contatos' %}">Gerenciar contatos →</a>
+        </div>
+    </article>
+    {% endif %}
+
+    <!-- Equipe (Staff e Admins) -->
+    {% if user.is_staff or user.perfil.tipo_usuario == 'administrador' %}
+    <article class="card" style="padding:24px;display:flex;flex-direction:column;justify-content:space-between">
+        <div>
+            <p class="eyebrow" style="font-size:0.7rem;margin-bottom:6px">Nossa Equipe</p>
+            <h3 style="margin-bottom:8px">Equipe no Supabase</h3>
+            <p class="muted" style="font-size:0.88rem;line-height:1.5">Adicione, edite ou remova os membros e vendedores integrados ao banco do Supabase.</p>
+        </div>
+        <div style="margin-top:20px">
+            <a class="button button-light" style="width:100%;justify-content:center" href="{% url 'integrantes' %}">Gerenciar equipe →</a>
+        </div>
+    </article>
+    {% endif %}
+
+    <!-- Relatórios (Staff e Admins) -->
+    {% if user.is_staff or user.perfil.tipo_usuario == 'administrador' %}
+    <article class="card" style="padding:24px;display:flex;flex-direction:column;justify-content:space-between">
+        <div>
+            <p class="eyebrow" style="font-size:0.7rem;margin-bottom:6px">Análises</p>
+            <h3 style="margin-bottom:8px">Relatórios & Gráficos</h3>
+            <p class="muted" style="font-size:0.88rem;line-height:1.5">Visualize estatísticas e gráficos de distribuição por categoria e status de catálogo.</p>
+        </div>
+        <div style="margin-top:20px">
+            <a class="button button-light" style="width:100%;justify-content:center" href="{% url 'relatorios' %}">Acessar relatórios →</a>
+        </div>
+    </article>
+    {% endif %}
+</div>
 {% endblock %}

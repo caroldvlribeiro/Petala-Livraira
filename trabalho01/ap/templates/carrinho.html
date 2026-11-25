@@ -15,7 +15,7 @@
                 <p class="muted">{{ item.quantidade }} unidade(s) · R$ {{ item.livro.preco|floatformat:2 }}</p>
             </div>
             <strong>R$ {{ item.subtotal|floatformat:2 }}</strong>
-            <form method="post" action="{% url 'remover_carrinho' item.livro.id %}">
+            <form method="post" action="{% url 'remover_carrinho' item.livro.id %}" onsubmit="return confirm('Deseja remover este livro da sacola?')">
                 {% csrf_token %}<button class="button button-light" type="submit">Remover</button>
             </form>
         </article>
@@ -30,7 +30,7 @@
                 <p class="muted">Recomendação da Open Library · R$ {{ item.preco|floatformat:2 }} · {{ item.quantidade }} unidade(s)</p>
             </div>
             <strong>R$ {{ item.subtotal|floatformat:2 }}</strong>
-            <form method="post" action="{% url 'remover_api_carrinho' item.key %}">
+            <form method="post" action="{% url 'remover_api_carrinho' item.key %}" onsubmit="return confirm('Deseja remover esta recomendação da sacola?')">
                 {% csrf_token %}<button class="button button-light" type="submit">Remover</button>
             </form>
         </article>

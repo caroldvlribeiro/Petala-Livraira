@@ -1,8 +1,43 @@
 {% extends "template.html" %}
-{% block titulo %}Entrar | Pétala{% endblock %}
+
+{% block titulo %}Entrar na Conta | Pétala Livraria{% endblock %}
+
 {% block conteudo %}
-<section class="form-card card" style="max-width:520px;margin:auto"><p class="eyebrow">Bem-vindo de volta</p><h1>Entrar na Pétala</h1><p class="muted" style="margin:8px 0 20px">Acesse sua estante e acompanhe seus pedidos.</p>
-{% for message in messages %}<p class="flash-{{ message.tags }} flash-messages">{{ message }}</p>{% endfor %}
-<form method="post">{% csrf_token %}{{ form.as_p }}{% if form.errors %}<p class="flash-error flash-messages">Usuário ou senha inválidos.</p>{% endif %}<button class="button" type="submit">Entrar</button></form>
-<p class="muted" style="margin-top:16px"><a href="{% url 'password_reset' %}">Esqueci minha senha</a> · <a href="{% url 'cadastrar_usuario' %}">Criar conta</a></p></section>
+<section class="form-card card" style="max-width:520px;margin:30px auto;padding:32px">
+    <p class="eyebrow">Bem-vindo(a) de volta</p>
+    <h1 style="margin-top:6px">Entrar na Pétala</h1>
+    <p class="muted" style="margin:8px 0 24px">Acesse sua estante pessoal, acompanhe seus pedidos e gerencie seu catálogo.</p>
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+
+        {% for field in form %}
+            <div class="campo" style="margin-bottom:18px">
+                <label for="{{ field.id_for_label }}"><strong>{{ field.label }}</strong></label>
+                {{ field }}
+                {% if field.help_text %}
+                    <small class="muted" style="display:block;margin-top:4px;font-size:0.82rem">{{ field.help_text }}</small>
+                {% endif %}
+                {% if field.errors %}
+                    <div style="color:var(--burgundy);font-size:0.85rem;margin-top:4px">
+                        {% for error in field.errors %}<p>{{ error }}</p>{% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        {% if form.non_field_errors %}
+            <div style="color:var(--burgundy);font-size:0.88rem;margin-bottom:16px;padding:10px;background:#f8e6e1;border-radius:8px">
+                {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+            </div>
+        {% endif %}
+
+        <button class="button" style="width:100%;justify-content:center;margin-top:8px" type="submit">Entrar na Conta</button>
+    </form>
+
+    <div style="margin-top:24px;padding-top:18px;border-top:1px solid var(--line);text-align:center" class="muted">
+        <p><a href="{% url 'password_reset' %}" style="color:var(--burgundy);font-weight:600">Esqueci minha senha</a></p>
+        <p style="margin-top:8px">Ainda não tem conta? <a href="{% url 'cadastrar_usuario' %}" style="color:var(--navy);font-weight:700">Criar uma conta gratuita</a></p>
+    </div>
+</section>
 {% endblock %}

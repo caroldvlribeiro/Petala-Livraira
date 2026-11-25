@@ -2,49 +2,52 @@
 
 {% load static %}
 
-{% block titulo %} Editar Serviço {% endblock %}
+{% block titulo %}Editar Livro | Pétala Livraria{% endblock %}
 
 {% block estilos %}
 <link rel="stylesheet" href="{% static 'css/form-servico.css' %}">
 {% endblock %}
 
 {% block conteudo %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Gestão do Acervo</p>
+        <h1 class="form-titulo">Editar Livro: {{ livro.nome }}</h1>
+        <p class="muted">Atualize os dados e a disponibilidade da obra no catálogo.</p>
+    </div>
+</div>
 
-<h2 class="form-titulo">Editar Serviço</h2>
-
-<div class="form-container">
+<div class="form-container card" style="padding:28px">
     <form method="POST" enctype="multipart/form-data" class="servico-form">
         {% csrf_token %}
 
         {% for field in form %}
-        <div class="campo">
-            <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
-            {{ field }}
-        </div>
+            <div class="campo" style="margin-bottom:18px">
+                <label for="{{ field.id_for_label }}"><strong>{{ field.label }}</strong>{% if field.field.required %} <span style="color:var(--burgundy)">*</span>{% endif %}</label>
+                {{ field }}
+                {% if field.help_text %}
+                    <small class="muted" style="display:block;margin-top:4px;font-size:0.82rem">{{ field.help_text }}</small>
+                {% endif %}
+                {% if field.errors %}
+                    <div style="color:var(--burgundy);font-size:0.85rem;margin-top:4px">
+                        {% for error in field.errors %}<p>{{ error }}</p>{% endfor %}
+                    </div>
+                {% endif %}
+            </div>
         {% endfor %}
 
-        {% if form.errors %}
-        <div class="form-errors">
-            <strong>Erros no formulário:</strong>
-            <ul>
-                {% for field in form %}
-                    {% for error in field.errors %}
-                        <li>{{ error }}</li>
-                    {% endfor %}
-                {% endfor %}
-                {% for error in form.non_field_errors %}
-                    <li>{{ error }}</li>
-                {% endfor %}
-            </ul>
+        <div style="display:flex;gap:12px;margin-top:24px;flex-wrap:wrap;align-items:center">
+            <button class="button" type="submit">Salvar Alterações</button>
+            <a class="button button-light" href="{% url 'servicos' %}">Cancelar</a>
         </div>
-        {% endif %}
+    </form>
 
-        <button type="submit">Salvar</button>
-    </form>
-    <form method="POST" action="{% url 'excluirServico' livro.id %}" style="margin-top:12px" onsubmit="return confirm('Deseja realmente excluir este livro?')">
-        {% csrf_token %}
-        <button type="submit" class="button button-light">Excluir livro</button>
-    </form>
+    <div style="margin-top:32px;padding-top:20px;border-top:1px solid var(--line)">
+        <p class="muted" style="font-size:0.88rem;margin-bottom:8px">Zona de perigo: esta ação não pode ser desfeita.</p>
+        <form method="POST" action="{% url 'excluirServico' livro.id %}" onsubmit="return confirm('Deseja realmente excluir permanentemente este livro do catálogo?')">
+            {% csrf_token %}
+            <button type="submit" class="button" style="background:#b3261e;color:#fff">Excluir Livro</button>
+        </form>
+    </div>
 </div>
-
 {% endblock %}

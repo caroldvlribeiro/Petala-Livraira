@@ -2,6 +2,7 @@ from decimal import Decimal
 import hashlib
 import logging
 
+from django.core.cache import cache
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
@@ -134,7 +135,10 @@ def addServico(request):
             livro.vendedor = request.user
             livro.save()
             sincronizar_livro(livro)
+            messages.success(request, f'Livro "{livro.nome}" cadastrado com sucesso no catálogo!')
             return redirect('servicos')
+        else:
+            messages.error(request, "Não foi possível cadastrar o livro. Verifique os campos destacados abaixo.")
 
     return render (request, "add-servico.html", {'form': form})
 
@@ -145,10 +149,13 @@ def excluirServico(request, id):
     else:
         servico = get_object_or_404(Servico, id=id, vendedor=request.user)
     if request.method == 'POST':
-        servico.imagem.delete(save=False)
+        nome_livro = servico.nome
+        if servico.imagem:
+            servico.imagem.delete(save=False)
         servico_id = servico.id
         servico.delete()
         remover_livro(servico_id)
+        messages.success(request, f'O livro "{nome_livro}" foi excluído com sucesso.')
     return redirect('servicos')
 
 @staff_required
@@ -158,38 +165,95 @@ def editarServico(request, id):
     else:
         servico = get_object_or_404(Servico, id=id, vendedor=request.user)
     form = FormServico(request.POST or None, request.FILES or None, instance=servico)
-    if request.POST:
+    if request.method == "POST":
         if form.is_valid():
             form.save()
             sincronizar_livro(servico)
+            messages.success(request, f'As alterações do livro "{servico.nome}" foram salvas com sucesso!')
             return redirect('servicos')
+        else:
+            messages.error(request, "Não foi possível atualizar o livro. Corrija os erros apontados no formulário.")
 
     return render(request, "editar-servico.html", {'form': form, 'livro': servico})
 
 def produtos(request):
     livros = Servico.objects.filter(ativo=True)
-    produtos_api = []
+    produtos_api = cache.get('openlibrary_produtos')
     api_erro = None
-    try:
-        resposta = requests.get(
-            'https://openlibrary.org/search.json',
-            params={'q': 'literatura brasileira', 'limit': 24},
-            timeout=5,
-        )
-        resposta.raise_for_status()
-        for item in resposta.json().get('docs', []):
-            capa = item.get('cover_i')
-            produtos_api.append({
-                'key': hashlib.sha1(
-                    f"{item.get('title', 'Livro sem título')}|{(item.get('author_name') or ['Autor desconhecido'])[0]}|{item.get('first_publish_year') or ''}".encode("utf-8")
-                ).hexdigest(),
-                'title': item.get('title', 'Livro sem título'),
-                'author': (item.get('author_name') or ['Autor desconhecido'])[0],
-                'year': item.get('first_publish_year'),
-                'image': f'https://covers.openlibrary.org/b/id/{capa}-M.jpg' if capa else '',
-            })
-    except (requests.RequestException, ValueError):
-        api_erro = 'A vitrine de recomendações está indisponível no momento.'
+
+    if not produtos_api:
+        produtos_api = []
+        try:
+            headers = {
+                'User-Agent': 'PetalaLivraria/1.0 (https://petala.sa-east-1.elasticbeanstalk.com; contato@petala.com.br)'
+            }
+            resposta = requests.get(
+                'https://openlibrary.org/search.json',
+                params={'q': 'literatura brasileira', 'limit': 24},
+                headers=headers,
+                timeout=10,
+            )
+            resposta.raise_for_status()
+            for item in resposta.json().get('docs', []):
+                capa = item.get('cover_i')
+                produtos_api.append({
+                    'key': hashlib.sha1(
+                        f"{item.get('title', 'Livro sem título')}|{(item.get('author_name') or ['Autor desconhecido'])[0]}|{item.get('first_publish_year') or ''}".encode("utf-8")
+                    ).hexdigest(),
+                    'title': item.get('title', 'Livro sem título'),
+                    'author': (item.get('author_name') or ['Autor desconhecido'])[0],
+                    'year': item.get('first_publish_year'),
+                    'image': f'https://covers.openlibrary.org/b/id/{capa}-M.jpg' if capa else '',
+                })
+            if produtos_api:
+                cache.set('openlibrary_produtos', produtos_api, 1800)
+        except (requests.RequestException, ValueError) as e:
+            logger.warning("Falha ao consultar API da Open Library: %s", e)
+            produtos_api = [
+                {
+                    'key': 'fallback-dom-casmurro',
+                    'title': 'Dom Casmurro',
+                    'author': 'Machado de Assis',
+                    'year': 1899,
+                    'image': 'https://covers.openlibrary.org/b/id/8231856-M.jpg',
+                },
+                {
+                    'key': 'fallback-memorias-postumas',
+                    'title': 'Memórias Póstumas de Brás Cubas',
+                    'author': 'Machado de Assis',
+                    'year': 1881,
+                    'image': 'https://covers.openlibrary.org/b/id/11153244-M.jpg',
+                },
+                {
+                    'key': 'fallback-grande-sertao',
+                    'title': 'Grande Sertão: Veredas',
+                    'author': 'João Guimarães Rosa',
+                    'year': 1956,
+                    'image': 'https://covers.openlibrary.org/b/id/12818862-M.jpg',
+                },
+                {
+                    'key': 'fallback-hora-da-estrela',
+                    'title': 'A Hora da Estrela',
+                    'author': 'Clarice Lispector',
+                    'year': 1977,
+                    'image': 'https://covers.openlibrary.org/b/id/8314126-M.jpg',
+                },
+                {
+                    'key': 'fallback-capitaes-da-areia',
+                    'title': 'Capitães da Areia',
+                    'author': 'Jorge Amado',
+                    'year': 1937,
+                    'image': 'https://covers.openlibrary.org/b/id/8743232-M.jpg',
+                },
+                {
+                    'key': 'fallback-quarto-de-despejo',
+                    'title': 'Quarto de Despejo',
+                    'author': 'Carolina Maria de Jesus',
+                    'year': 1960,
+                    'image': 'https://covers.openlibrary.org/b/id/10543210-M.jpg',
+                },
+            ]
+
     return render(request, "produtos.html", {
         'livros': livros,
         'produtos_api': produtos_api,
@@ -296,13 +360,15 @@ def adicionar_api_carrinho(request):
 def remover_carrinho(request, id):
     if request.method == 'POST':
         carrinho = _carrinho(request)
-        carrinho.pop(str(id), None)
+        removido = carrinho.pop(str(id), None)
         request.session.modified = True
         if request.user.is_authenticated:
             sincronizar_carrinho(request.user, {
                 'local': carrinho,
                 'api': request.session.setdefault('carrinho_api', {}),
             })
+        if removido is not None:
+            messages.success(request, 'Item removido da sacola com sucesso.')
     return redirect('carrinho')
 
 
@@ -310,12 +376,14 @@ def remover_carrinho(request, id):
 def remover_api_carrinho(request, key):
     if request.method == 'POST':
         carrinho_api = request.session.setdefault('carrinho_api', {})
-        carrinho_api.pop(key, None)
+        removido = carrinho_api.pop(key, None)
         request.session.modified = True
         sincronizar_carrinho(request.user, {
             'local': _carrinho(request),
             'api': carrinho_api,
         })
+        if removido is not None:
+            messages.success(request, 'Recomendação externa removida da sacola.')
     return redirect('carrinho')
 
 
@@ -362,8 +430,9 @@ def finalizar_pedido(request):
 def pedidos(request):
     return render(request, 'pedidos.html', {'pedidos': Pedido.objects.filter(usuario=request.user).prefetch_related('itens__livro')})
 
+@admin_required
 def contatos(request):
-    contatos = Contato.objects.all()
+    contatos = Contato.objects.all().order_by('-id')
     return render(request, "contatos.html", {'contatos': contatos})
 
 def novoContato(request):
@@ -372,7 +441,10 @@ def novoContato(request):
         if form.is_valid():
             contato = form.save()
             sincronizar_contato(contato)
+            messages.success(request, f"Obrigado pelo contato, {contato.nome}! Sua mensagem foi enviada com sucesso e retornaremos em breve.")
             return redirect('index')
+        else:
+            messages.error(request, "Não foi possível enviar sua mensagem. Por favor, confira os campos abaixo.")
     else:
         form = FormContato()
     
@@ -382,9 +454,11 @@ def novoContato(request):
 def excluirContato(request, id):
     contato = get_object_or_404(Contato, id=id)
     if request.method == 'POST':
+        nome = contato.nome
         contato_id = contato.id
         contato.delete()
         remover_contato(contato_id)
+        messages.success(request, f"Mensagem de contato enviada por {nome} foi excluída.")
     return redirect('contatos')
 
 def integrantes(request):
@@ -441,19 +515,27 @@ def addIntegrante(request):
         messages.error(request, "Configure o Supabase para gerenciar integrantes.")
         return redirect("integrantes")
     if request.method == "POST":
-        nome = request.POST.get("nome")
-        cargo = request.POST.get("cargo")
-        biografia = request.POST.get("biografia")
-        foto_url = request.POST.get("foto_url")
+        nome = (request.POST.get("nome") or "").strip()
+        cargo = (request.POST.get("cargo") or "").strip()
+        biografia = (request.POST.get("biografia") or "").strip()
+        foto_url = (request.POST.get("foto_url") or "").strip()
         
-        supabase.table("integrantes").insert({
-            "nome": nome,
-            "cargo": cargo,
-            "biografia": biografia,
-            "foto_url": foto_url
-        }).execute()
-        
-        return redirect('integrantes')
+        if not nome or not cargo or not biografia:
+            messages.error(request, "Por favor, preencha todos os campos obrigatórios (nome, cargo e biografia).")
+            return render(request, "add-integrante.html")
+
+        try:
+            supabase.table("integrantes").insert({
+                "nome": nome,
+                "cargo": cargo,
+                "biografia": biografia,
+                "foto_url": foto_url
+            }).execute()
+            messages.success(request, f'Integrante "{nome}" cadastrado com sucesso na equipe!')
+            return redirect('integrantes')
+        except Exception:
+            logger.exception("Erro ao inserir integrante no Supabase.")
+            messages.error(request, "Ocorreu um erro ao salvar o integrante no Supabase. Tente novamente.")
     
     return render(request, "add-integrante.html")
 
@@ -462,19 +544,39 @@ def editarIntegrante(request, id):
     if supabase is None:
         messages.error(request, "Configure o Supabase para gerenciar integrantes.")
         return redirect("integrantes")
-    resposta = supabase.table("integrantes").select("*").eq("id", id).execute()
-    if not resposta.data:
-        raise Http404("Integrante não encontrado.")
+    try:
+        resposta = supabase.table("integrantes").select("*").eq("id", id).execute()
+        if not resposta.data:
+            messages.error(request, "Integrante não encontrado.")
+            return redirect("integrantes")
+    except Exception:
+        logger.exception("Erro ao buscar integrante no Supabase.")
+        messages.error(request, "Falha na comunicação com o Supabase ao carregar o integrante.")
+        return redirect("integrantes")
 
     integrante = resposta.data[0]
     if request.method == "POST":
-        supabase.table("integrantes").update({
-            "nome": request.POST.get("nome"),
-            "cargo": request.POST.get("cargo"),
-            "biografia": request.POST.get("biografia"),
-            "foto_url": request.POST.get("foto_url"),
-        }).eq("id", id).execute()
-        return redirect("integrantes")
+        nome = (request.POST.get("nome") or "").strip()
+        cargo = (request.POST.get("cargo") or "").strip()
+        biografia = (request.POST.get("biografia") or "").strip()
+        foto_url = (request.POST.get("foto_url") or "").strip()
+
+        if not nome or not cargo or not biografia:
+            messages.error(request, "Por favor, preencha todos os campos obrigatórios (nome, cargo e biografia).")
+            return render(request, "editar-integrante.html", {"integrante": integrante})
+
+        try:
+            supabase.table("integrantes").update({
+                "nome": nome,
+                "cargo": cargo,
+                "biografia": biografia,
+                "foto_url": foto_url,
+            }).eq("id", id).execute()
+            messages.success(request, f'Os dados do integrante "{nome}" foram atualizados com sucesso!')
+            return redirect("integrantes")
+        except Exception:
+            logger.exception("Erro ao atualizar integrante no Supabase.")
+            messages.error(request, "Não foi possível atualizar o integrante no Supabase. Tente novamente.")
 
     return render(request, "editar-integrante.html", {"integrante": integrante})
 
@@ -483,27 +585,32 @@ def delIntegrante(request, id):
     if supabase is None:
         messages.error(request, "Configure o Supabase para gerenciar integrantes.")
         return redirect("integrantes")
-    resposta = supabase.table("integrantes").select("*").eq("id", id).execute()
-    integrante = resposta.data[0] if resposta.data else None
-    if integrante:
-        vendedor = User.objects.filter(
-            perfil__tipo_usuario="vendedor",
-            first_name=integrante.get("nome"),
-        ).first()
-        if vendedor is None:
+    try:
+        resposta = supabase.table("integrantes").select("*").eq("id", id).execute()
+        integrante = resposta.data[0] if resposta.data else None
+        if integrante:
             vendedor = User.objects.filter(
                 perfil__tipo_usuario="vendedor",
-                username=integrante.get("nome"),
+                first_name=integrante.get("nome"),
             ).first()
-        if vendedor is None:
-            for candidato in User.objects.filter(perfil__tipo_usuario="vendedor"):
-                if (candidato.get_full_name() or candidato.username) == integrante.get("nome"):
-                    vendedor = candidato
-                    break
-        if vendedor is not None:
-            remover_perfil(vendedor.id)
-            vendedor.delete()
-    supabase.table("integrantes").delete().eq("id", id).execute()
+            if vendedor is None:
+                vendedor = User.objects.filter(
+                    perfil__tipo_usuario="vendedor",
+                    username=integrante.get("nome"),
+                ).first()
+            if vendedor is None:
+                for candidato in User.objects.filter(perfil__tipo_usuario="vendedor"):
+                    if (candidato.get_full_name() or candidato.username) == integrante.get("nome"):
+                        vendedor = candidato
+                        break
+            if vendedor is not None:
+                remover_perfil(vendedor.id)
+                vendedor.delete()
+        supabase.table("integrantes").delete().eq("id", id).execute()
+        messages.success(request, "Integrante removido da equipe com sucesso.")
+    except Exception:
+        logger.exception("Erro ao excluir integrante no Supabase.")
+        messages.error(request, "Não foi possível remover o integrante no Supabase.")
     return redirect('integrantes')
 
 
@@ -559,7 +666,7 @@ def categoria_api(request, id):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-@staff_required
+@admin_required
 def relatorios(request):
     servicos = Servico.objects.all()
     servicos_ativos = servicos.filter(ativo=True).count()

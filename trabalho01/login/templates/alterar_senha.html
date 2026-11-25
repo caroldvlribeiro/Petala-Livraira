@@ -1,5 +1,41 @@
 {% extends "template.html" %}
-{% block titulo %}Alterar senha | Pétala{% endblock %}
+
+{% block titulo %}Alterar Senha | Pétala Livraria{% endblock %}
+
 {% block conteudo %}
-<section class="form-card card" style="max-width:600px"><p class="eyebrow">Segurança</p><h1>Alterar senha</h1><p class="muted" style="margin:8px 0 20px">Escolha uma senha forte para proteger sua conta.</p><form method="post">{% csrf_token %}{{ form.as_p }}{% if form.errors %}<p class="flash-error flash-messages">Não foi possível alterar a senha. Confira os campos.</p>{% endif %}<button class="button" type="submit">Salvar nova senha</button></form></section>
+<section class="form-card card" style="max-width:600px;margin:30px auto;padding:32px">
+    <p class="eyebrow">Segurança da Conta</p>
+    <h1 style="margin-top:6px">Alterar Senha de Acesso</h1>
+    <p class="muted" style="margin:8px 0 24px">Escolha uma nova senha forte com pelo menos 8 caracteres para proteger sua conta.</p>
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+
+        {% for field in form %}
+            <div class="campo" style="margin-bottom:18px">
+                <label for="{{ field.id_for_label }}"><strong>{{ field.label }}</strong></label>
+                {{ field }}
+                {% if field.help_text %}
+                    <small class="muted" style="display:block;margin-top:4px;font-size:0.82rem">{{ field.help_text }}</small>
+                {% endif %}
+                {% if field.errors %}
+                    <div style="color:var(--burgundy);font-size:0.85rem;margin-top:4px">
+                        {% for error in field.errors %}<p>{{ error }}</p>{% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        {% if form.non_field_errors %}
+            <div style="color:var(--burgundy);font-size:0.88rem;margin-bottom:16px;padding:10px;background:#f8e6e1;border-radius:8px">
+                {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+            </div>
+        {% endif %}
+
+        <div style="display:flex;gap:12px;margin-top:24px;flex-wrap:wrap">
+            <button class="button" type="submit">Salvar Nova Senha</button>
+            <a class="button button-light" href="{% url 'perfil' %}">Cancelar</a>
+        </div>
+    </form>
+</section>
 {% endblock %}

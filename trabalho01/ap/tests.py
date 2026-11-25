@@ -223,3 +223,25 @@ class AdministradorTests(TestCase):
                 for integrante in vendedores
             )
         )
+
+    def test_cliente_nao_acessa_contatos_nem_relatorios(self):
+        cliente = User.objects.create_user(username="cliente_teste", password="senha-forte-123")
+        Perfil.objects.create(usuario=cliente, tipo_usuario="cliente")
+        self.client.force_login(cliente)
+
+        self.assertEqual(self.client.get(reverse("contatos")).status_code, 302)
+        self.assertEqual(self.client.get(reverse("relatorios")).status_code, 302)
+        self.assertEqual(self.client.get(reverse("addIntegrante")).status_code, 302)
+
+    def test_vendedor_nao_acessa_contatos_nem_relatorios(self):
+        self.client.force_login(self.vendedor)
+
+        self.assertEqual(self.client.get(reverse("contatos")).status_code, 302)
+        self.assertEqual(self.client.get(reverse("relatorios")).status_code, 302)
+        self.assertEqual(self.client.get(reverse("addIntegrante")).status_code, 302)
+
+    def test_administrador_acessa_contatos_e_relatorios(self):
+        self.client.force_login(self.administrador)
+
+        self.assertEqual(self.client.get(reverse("contatos")).status_code, 200)
+        self.assertEqual(self.client.get(reverse("relatorios")).status_code, 200)

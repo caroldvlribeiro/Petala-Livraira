@@ -1,5 +1,47 @@
 {% extends "template.html" %}
-{% block titulo %}Meu perfil | Pétala{% endblock %}
+
+{% block titulo %}Meu Perfil | Pétala Livraria{% endblock %}
+
 {% block conteudo %}
-<section class="form-card card" style="max-width:640px"><p class="eyebrow">Minha conta</p><h1>Editar perfil</h1><p class="muted" style="margin:8px 0 20px">Mantenha seus dados pessoais atualizados.</p>{% if mensagem %}<p class="flash-success flash-messages">{{ mensagem }}</p>{% endif %}<form method="post">{% csrf_token %}<p><label for="first_name">Nome</label><input id="first_name" name="first_name" value="{{ user.first_name }}" placeholder="Seu nome"></p><p><label for="last_name">Sobrenome</label><input id="last_name" name="last_name" value="{{ user.last_name }}" placeholder="Seu sobrenome"></p><p><label for="email">E-mail</label><input id="email" type="email" name="email" value="{{ user.email }}" placeholder="voce@exemplo.com"></p>{% if user.perfil.tipo_usuario == 'vendedor' %}<p><label for="foto_url">Link da foto</label><input id="foto_url" name="foto_url" type="url" value="{{ user.perfil.foto_url }}" placeholder="https://exemplo.com/foto.jpg"></p>{% endif %}<button class="button" type="submit">Salvar alterações</button></form><a class="button button-light" style="margin-top:12px" href="{% url 'alterar_senha' %}">Alterar senha</a></section>
+<section class="form-card card" style="max-width:640px;margin:30px auto;padding:32px">
+    <p class="eyebrow">Minha Conta</p>
+    <h1 style="margin-top:6px">Editar Perfil</h1>
+    <p class="muted" style="margin:8px 0 24px">Mantenha suas informações cadastrais e de contato sempre atualizadas.</p>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="campo" style="margin-bottom:18px">
+            <label for="first_name"><strong>Nome</strong></label>
+            <input id="first_name" name="first_name" value="{{ user.first_name }}" placeholder="Ex: Ana" class="campo-input">
+            <small class="muted" style="display:block;margin-top:4px;font-size:0.82rem">Seu primeiro nome.</small>
+        </div>
+
+        <div class="campo" style="margin-bottom:18px">
+            <label for="last_name"><strong>Sobrenome</strong></label>
+            <input id="last_name" name="last_name" value="{{ user.last_name }}" placeholder="Ex: Silva Santos" class="campo-input">
+            <small class="muted" style="display:block;margin-top:4px;font-size:0.82rem">Seu sobrenome completo.</small>
+        </div>
+
+        <div class="campo" style="margin-bottom:18px">
+            <label for="email"><strong>Endereço de E-mail</strong> <span style="color:var(--burgundy)">*</span></label>
+            <input id="email" type="email" name="email" value="{{ user.email }}" placeholder="ana@exemplo.com" class="campo-input" required>
+            <small class="muted" style="display:block;margin-top:4px;font-size:0.82rem">E-mail para notificações e recuperação de senha.</small>
+        </div>
+
+        {% if user.perfil.tipo_usuario == 'vendedor' %}
+            <div class="campo" style="margin-bottom:18px">
+                <label for="foto_url"><strong>Link da Foto de Perfil</strong></label>
+                <input id="foto_url" name="foto_url" type="url" value="{{ user.perfil.foto_url }}" placeholder="https://exemplo.com/minha-foto.jpg" class="campo-input">
+                <small class="muted" style="display:block;margin-top:4px;font-size:0.82rem">URL pública da imagem exibida no card da equipe e no catálogo.</small>
+            </div>
+        {% endif %}
+
+        <div style="display:flex;gap:12px;margin-top:24px;flex-wrap:wrap">
+            <button class="button" type="submit">Salvar Alterações</button>
+            <a class="button button-light" href="{% url 'alterar_senha' %}">Alterar Minha Senha</a>
+            <a class="button button-light" href="{% url 'dashboard' %}">Voltar à Conta</a>
+        </div>
+    </form>
+</section>
 {% endblock %}

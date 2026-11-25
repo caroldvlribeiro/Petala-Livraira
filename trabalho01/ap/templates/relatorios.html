@@ -2,27 +2,40 @@
 
 {% load static %}
 
-{% block titulo %} Graficos {% endblock %}
+{% block titulo %}Relatórios & Gráficos | Pétala Livraria{% endblock %}
 
 {% block estilos %}
 <link rel="stylesheet" href="{% static 'css/relatorios.css' %}">
 {% endblock %}
 
 {% block conteudo %}
-<h2 class="relatorios-titulo">Relatórios</h2>
-<div class="relatorios-graficos">
-    <div class="grafico-categorias">
-        <canvas id="graficoCategorias"></canvas>
-    </div>
-    <div class="grafico-status">
-        <canvas id="graficoStatus"></canvas>
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Análise de Dados</p>
+        <h1 class="relatorios-titulo">Relatórios & Estatísticas do Acervo</h1>
+        <p class="muted">Visualize a distribuição do catálogo por categoria literária e a taxa de disponibilidade das obras.</p>
     </div>
 </div>
-{{categorias_labels|json_script:"categorias"}}
-{{categorias_valores|json_script:"quantidades"}}
-{{status_valores|json_script:"status-valores"}}
+
+<div class="relatorios-graficos" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:24px;margin-top:16px">
+    <div class="card" style="padding:24px">
+        <h3 style="margin-bottom:16px;font-size:1.1rem">Livros por Categoria</h3>
+        <div class="grafico-categorias">
+            <canvas id="graficoCategorias"></canvas>
+        </div>
+    </div>
+    <div class="card" style="padding:24px">
+        <h3 style="margin-bottom:16px;font-size:1.1rem">Disponibilidade do Acervo</h3>
+        <div class="grafico-status">
+            <canvas id="graficoStatus"></canvas>
+        </div>
+    </div>
+</div>
+
+{{ categorias_labels|json_script:"categorias" }}
+{{ categorias_valores|json_script:"quantidades" }}
+{{ status_valores|json_script:"status-valores" }}
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="{% static 'js/relatorio.js' %}"></script>
-
 {% endblock %}

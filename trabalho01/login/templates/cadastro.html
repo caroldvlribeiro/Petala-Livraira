@@ -1,6 +1,42 @@
 {% extends "template.html" %}
-{% block titulo %}Criar conta | Pétala{% endblock %}
+
+{% block titulo %}Criar Conta | Pétala Livraria{% endblock %}
+
 {% block conteudo %}
-<section class="form-card card" style="max-width:600px;margin:auto"><p class="eyebrow">Faça parte da comunidade</p><h1>Cadastrar usuário</h1><p class="muted" style="margin:8px 0 20px">Guarde seus pedidos e descubra histórias feitas para você.</p>
-{% if form.errors %}<p class="flash-error flash-messages">Não foi possível concluir o cadastro. Confira os campos indicados abaixo.</p>{% endif %}<form method="post">{% csrf_token %}{{ form.as_p }}<button class="button" type="submit">Cadastrar</button></form><p class="muted" style="margin-top:16px">Já tem uma conta? <a href="{% url 'login' %}">Entrar</a></p></section>
+<section class="form-card card" style="max-width:620px;margin:30px auto;padding:32px">
+    <p class="eyebrow">Faça parte da nossa história</p>
+    <h1 style="margin-top:6px">Cadastrar usuário</h1>
+    <p class="muted" style="margin:8px 0 24px">Crie seu acesso para realizar compras, salvar sacolas ou publicar títulos como vendedor parceiro.</p>
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+
+        {% for field in form %}
+            <div class="campo" style="margin-bottom:18px">
+                <label for="{{ field.id_for_label }}"><strong>{{ field.label }}</strong>{% if field.field.required %} <span style="color:var(--burgundy)">*</span>{% endif %}</label>
+                {{ field }}
+                {% if field.help_text %}
+                    <small class="muted" style="display:block;margin-top:4px;font-size:0.82rem">{{ field.help_text }}</small>
+                {% endif %}
+                {% if field.errors %}
+                    <div style="color:var(--burgundy);font-size:0.85rem;margin-top:4px">
+                        {% for error in field.errors %}<p>{{ error }}</p>{% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        {% if form.non_field_errors %}
+            <div style="color:var(--burgundy);font-size:0.88rem;margin-bottom:16px;padding:10px;background:#f8e6e1;border-radius:8px">
+                {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+            </div>
+        {% endif %}
+
+        <button class="button" style="width:100%;justify-content:center;margin-top:8px" type="submit">Finalizar Cadastro</button>
+    </form>
+
+    <div style="margin-top:24px;padding-top:18px;border-top:1px solid var(--line);text-align:center" class="muted">
+        <p>Já possui cadastro? <a href="{% url 'login' %}" style="color:var(--navy);font-weight:700">Acessar minha conta</a></p>
+    </div>
+</section>
 {% endblock %}

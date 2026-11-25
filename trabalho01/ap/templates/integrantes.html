@@ -28,18 +28,20 @@
                     <p class="integrante-cargo">{{ integrante.cargo }}</p>
                     <p class="integrante-bio">{{ integrante.biografia }}</p>
                 </div>
-                {% if user.is_authenticated and user.perfil.tipo_usuario == 'administrador' or user.is_staff %}
-                    {% if integrante.id %}
-                        <a href="{% url 'editarIntegrante' integrante.id %}" class="btn-adicionar">Editar</a>
-                        <form method="POST" action="{% url 'delIntegrante' integrante.id %}" onsubmit="return confirm('Deseja realmente excluir este integrante?')">
-                            {% csrf_token %}
-                            <button type="submit">Excluir</button>
-                        </form>
-                    {% elif integrante.vendedor and integrante.usuario_id %}
-                        <form method="POST" action="{% url 'excluirVendedor' integrante.usuario_id %}" onsubmit="return confirm('Deseja excluir este vendedor e sua conta?')">
-                            {% csrf_token %}
-                            <button type="submit">Excluir vendedor</button>
-                        </form>
+                {% if user.is_authenticated %}
+                    {% if user.is_staff or user.perfil.tipo_usuario == 'administrador' %}
+                        {% if integrante.id %}
+                            <a href="{% url 'editarIntegrante' integrante.id %}" class="btn-adicionar">Editar</a>
+                            <form method="POST" action="{% url 'delIntegrante' integrante.id %}" onsubmit="return confirm('Deseja realmente excluir este integrante?')">
+                                {% csrf_token %}
+                                <button type="submit">Excluir</button>
+                            </form>
+                        {% elif integrante.vendedor and integrante.usuario_id %}
+                            <form method="POST" action="{% url 'excluirVendedor' integrante.usuario_id %}" onsubmit="return confirm('Deseja excluir este vendedor e sua conta?')">
+                                {% csrf_token %}
+                                <button type="submit">Excluir vendedor</button>
+                            </form>
+                        {% endif %}
                     {% endif %}
                 {% endif %}
             </div>
@@ -47,9 +49,11 @@
             <p class="integrantes-vazio">Nenhum integrante cadastrado.</p>
         {% endfor %}
     </div>
-    {% if user.is_staff or user.is_authenticated and user.perfil.tipo_usuario == 'administrador' %}
-        <div class="acao-adicionar">
-            <a href="{% url 'addIntegrante' %}" class="btn-adicionar">+ Adicionar Integrante</a>
-        </div>
+    {% if user.is_authenticated %}
+        {% if user.is_staff or user.perfil.tipo_usuario == 'administrador' %}
+            <div class="acao-adicionar">
+                <a href="{% url 'addIntegrante' %}" class="btn-adicionar">+ Adicionar Integrante</a>
+            </div>
+        {% endif %}
     {% endif %}
 {% endblock %}
