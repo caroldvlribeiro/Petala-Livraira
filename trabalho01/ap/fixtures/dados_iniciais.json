@@ -1,0 +1,146 @@
+[
+{
+  "model": "ap.categoria",
+  "pk": 1,
+  "fields": {
+    "nome": "lanche",
+    "descricao": "lanches",
+    "ativo": true
+  }
+},
+{
+  "model": "ap.categoria",
+  "pk": 2,
+  "fields": {
+    "nome": "besteira",
+    "descricao": "scaczssac\\zz",
+    "ativo": true
+  }
+},
+{
+  "model": "ap.categoria",
+  "pk": 4,
+  "fields": {
+    "nome": "IDE",
+    "descricao": "kiro",
+    "ativo": true
+  }
+},
+{
+  "model": "ap.categoria",
+  "pk": 5,
+  "fields": {
+    "nome": "IDE",
+    "descricao": "VS",
+    "ativo": true
+  }
+},
+{
+  "model": "ap.servico",
+  "pk": 4,
+  "fields": {
+    "nome": "Mouse Ergonomico",
+    "descricao": "O mouse ergonômico foca na biomecânica da mão para prevenir dores e lesões por esforço repetitivo",
+    "preco": "0.00",
+    "imagem": "servicos/mouse_ergonomico.png",
+    "autor": "",
+    "isbn": "",
+    "estoque": 10,
+    "ativo": true,
+    "criado_em": "2026-09-10T19:19:13.841Z",
+    "atualizado_em": "2026-09-17T19:03:23.775Z",
+    "categoria": null,
+    "vendedor": null
+  }
+},
+{
+  "model": "ap.servico",
+  "pk": 8,
+  "fields": {
+    "nome": "Casinha",
+    "descricao": "Casinha das Formiguinhas",
+    "preco": "25.00",
+    "imagem": "servicos/Casinha.png",
+    "autor": "",
+    "isbn": "",
+    "estoque": 9,
+    "ativo": true,
+    "criado_em": "2026-09-10T19:35:04.838Z",
+    "atualizado_em": "2026-09-09T04:40:51.668Z",
+    "categoria": null,
+    "vendedor": null
+  }
+},
+{
+  "model": "ap.servico",
+  "pk": 13,
+  "fields": {
+    "nome": "Big Mac",
+    "descricao": "O sanduíche ícone da rede de fast-food MacDonald's",
+    "preco": "25.90",
+    "imagem": "servicos/bigmac.png",
+    "autor": "",
+    "isbn": "",
+    "estoque": 10,
+    "ativo": true,
+    "criado_em": "2026-09-09T06:02:02.901Z",
+    "atualizado_em": "2026-09-17T19:18:53.211Z",
+    "categoria": null,
+    "vendedor": null
+  }
+},
+{
+  "model": "ap.servico",
+  "pk": 15,
+  "fields": {
+    "nome": "ahhhhhhh",
+    "descricao": "ljlj",
+    "preco": "1000.00",
+    "imagem": "servicos/cursed-images-suffering.gif",
+    "autor": "",
+    "isbn": "",
+    "estoque": 10,
+    "ativo": true,
+    "criado_em": "2026-09-11T20:42:54.870Z",
+    "atualizado_em": "2026-09-11T20:42:54.870Z",
+    "categoria": null,
+    "vendedor": null
+  }
+},
+{
+  "model": "ap.servico",
+  "pk": 16,
+  "fields": {
+    "nome": "cacacac",
+    "descricao": "cassc",
+    "preco": "222.00",
+    "imagem": "servicos/erdplus.png",
+    "autor": "",
+    "isbn": "",
+    "estoque": 10,
+    "ativo": true,
+    "criado_em": "2026-09-17T19:37:44.772Z",
+    "atualizado_em": "2026-09-17T19:37:44.772Z",
+    "categoria": 1,
+    "vendedor": null
+  }
+},
+{
+  "model": "ap.servico",
+  "pk": 17,
+  "fields": {
+    "nome": "sdas",
+    "descricao": "aaaaaaaaaaaaaaaaaaaa",
+    "preco": "90.00",
+    "imagem": "servicos/erdplus_2.png",
+    "autor": "",
+    "isbn": "",
+    "estoque": 10,
+    "ativo": false,
+    "criado_em": "2026-09-17T19:40:41.358Z",
+    "atualizado_em": "2026-09-17T19:40:41.358Z",
+    "categoria": 2,
+    "vendedor": null
+  }
+}
+]

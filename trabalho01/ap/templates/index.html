@@ -17,7 +17,7 @@
 <div class="book-grid">
     {% for livro in livros_destaque %}
     <article class="book-card card">
-        {% if livro.imagem %}<img class="book-cover" src="{{ livro.imagem.url }}" alt="Capa de {{ livro.nome }}">
+        {% if livro.imagem %}<img class="book-cover" src="{{ livro.imagem_url|default:livro.imagem.url }}" alt="Capa de {{ livro.nome }}">
         {% else %}<div class="cover-placeholder" aria-hidden="true">✿</div>{% endif %}
         <div class="book-info"><h3>{{ livro.nome }}</h3><p class="book-author">{{ livro.autor|default:"Edição Pétala" }}</p><p class="book-price">R$ {{ livro.preco|floatformat:2 }}</p>
         <form method="post" action="{% url 'adicionar_carrinho' livro.id %}">{% csrf_token %}<input type="hidden" name="next" value="{% url 'index' %}"><button class="button" type="submit">Adicionar à sacola</button></form></div>

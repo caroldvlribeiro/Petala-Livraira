@@ -35,6 +35,19 @@ class Servico(models.Model):
     def livro(self):
         """Nome semântico para o catálogo, mantendo compatibilidade com o legado."""
         return self.nome
+
+    @property
+    def imagem_url(self):
+        if not self.imagem:
+            return ""
+        nome = str(self.imagem.name)
+        if nome.startswith("http://") or nome.startswith("https://"):
+            return nome
+        import os
+        from pathlib import Path
+        supabase_url = os.getenv("SUPABASE_URL", "https://rcgdynwvqfscixmhvxsj.supabase.co")
+        filename = Path(nome).name
+        return f"{supabase_url}/storage/v1/object/public/livros/capas/{self.id}_{filename}"
     
 class Contato(models.Model):
     nome = models.CharField(max_length=100)

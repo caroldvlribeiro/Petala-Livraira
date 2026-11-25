@@ -8,7 +8,7 @@
     <section class="cart-list">
         {% for item in itens %}
         <article class="cart-item card">
-            {% if item.livro.imagem %}<img src="{{ item.livro.imagem.url }}" alt="" class="cart-item img">
+            {% if item.livro.imagem %}<img src="{{ item.livro.imagem_url|default:item.livro.imagem.url }}" alt="" class="cart-item img">
             {% else %}<div class="cart-cover">✿</div>{% endif %}
             <div class="grow">
                 <h3>{{ item.livro.nome }}</h3>

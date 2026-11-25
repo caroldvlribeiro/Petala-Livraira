@@ -28,7 +28,7 @@
     {% for livro in livros %}
     <article class="book-card card">
         {% if livro.imagem %}
-            <img class="book-cover" src="{{ livro.imagem.url }}" alt="Capa de {{ livro.nome }}">
+            <img class="book-cover" src="{{ livro.imagem_url|default:livro.imagem.url }}" alt="Capa de {{ livro.nome }}">
         {% else %}
             <div class="cover-placeholder">✿</div>
         {% endif %}
