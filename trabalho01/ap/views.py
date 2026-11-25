@@ -11,6 +11,7 @@ from django.db import transaction
 from django.db.models.aggregates import Count
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .serializers import CategoriaSerializer
 from .models import Contato, ItemPedido, Pedido, Servico, Categoria
 from .forms import FormContato, FormServico
@@ -69,32 +70,32 @@ def index(request):
     return render(request, "index.html", {'livros_destaque': livros})
 
 def servicos(request):
-    
-    ## servicos = Servico.objects.all()
     servicos = Servico.objects.filter(ativo=True).exclude(preco=0)
-     
-    total_servicos = servicos.count()
+    
+    total_catalogo = servicos.count()
     tem_servicos = servicos.exists()
     
     mais_barato = servicos.order_by('preco').first()
     mais_caro = servicos.order_by('-preco').first()
     
-    
-    #recupera o valor do formulário de busca enviado pelo usuário
-    busca = request.GET.get('busca')
+    # Filtro por Nome (título ou palavra-chave)
+    busca = request.GET.get('busca', '').strip()
     if busca:
         servicos = servicos.filter(nome__icontains=busca)
         
-    #recupera as categorias ativas para exibir no filtro
+    # Filtro por Autor
+    autor = request.GET.get('autor', '').strip()
+    if autor:
+        servicos = servicos.filter(autor__icontains=autor)
+
+    # Filtro por Categoria
     categorias = Categoria.objects.filter(ativo=True)
-    
-    #recupera o valor do filtro de categoria enviado pelo usuário
-    categoria = request.GET.get('categoria')
+    categoria = request.GET.get('categoria', '').strip()
     if categoria:
-        #aplica o filtro de categoria aos serviços
         servicos = servicos.filter(categoria_id=categoria)
         
-    preco = request.GET.get('preco')
+    # Filtro por Faixa de Preço
+    preco = request.GET.get('preco', '').strip()
     if preco == 'baixo':
         servicos = servicos.filter(preco__lte=50)
     elif preco == 'medio':
@@ -102,28 +103,53 @@ def servicos(request):
     elif preco == 'alto':
         servicos = servicos.filter(preco__gt=250)
     
-    ordem = request.GET.get('ordem')
+    # Ordenação
+    ordem = request.GET.get('ordem', '').strip()
     if ordem == 'menor':
         servicos = servicos.order_by('preco')
     elif ordem == 'maior':
         servicos = servicos.order_by('-preco')
     elif ordem == 'nome':
         servicos = servicos.order_by('nome')
+    else:
+        servicos = servicos.order_by('-criado_em')
+
+    total_filtrados = servicos.count()
+
+    # Paginação (8 livros por página)
+    paginator = Paginator(servicos, 8)
+    page_number = request.GET.get('page', 1)
+    try:
+        livros_page = paginator.page(page_number)
+    except PageNotAnInteger:
+        livros_page = paginator.page(1)
+    except EmptyPage:
+        livros_page = paginator.page(paginator.num_pages)
+
+    # Parâmetros de query mantendo filtros na paginação
+    params = request.GET.copy()
+    if 'page' in params:
+        del params['page']
+    filtros_query = params.urlencode()
 
     contexto = {
-        'servicos': servicos,
-        'total_servicos': total_servicos,
+        'servicos': livros_page,
+        'livros': livros_page,
+        'page_obj': livros_page,
+        'paginator': paginator,
+        'total_servicos': total_filtrados,
+        'total_catalogo': total_catalogo,
         'tem_servicos': tem_servicos,
         'mais_barato': mais_barato,
         'mais_caro': mais_caro,
         'busca': busca,
+        'autor': autor,
         'categoria': categoria,
         'categorias': categorias,
         'preco': preco,
-        'ordem' : ordem,
+        'ordem': ordem,
+        'filtros_query': filtros_query,
     }
-        
-    contexto['livros'] = servicos
     return render(request, "servicos.html", contexto)
 
 @staff_required
@@ -177,7 +203,6 @@ def editarServico(request, id):
     return render(request, "editar-servico.html", {'form': form, 'livro': servico})
 
 def produtos(request):
-    livros = Servico.objects.filter(ativo=True)
     produtos_api = cache.get('openlibrary_produtos')
     api_erro = None
 
@@ -189,7 +214,7 @@ def produtos(request):
             }
             resposta = requests.get(
                 'https://openlibrary.org/search.json',
-                params={'q': 'literatura brasileira', 'limit': 24},
+                params={'q': 'literatura brasileira', 'limit': 36},
                 headers=headers,
                 timeout=10,
             )
@@ -254,9 +279,92 @@ def produtos(request):
                 },
             ]
 
+    # Filtro opcional na API por busca (título ou autor)
+    busca_api = request.GET.get('busca_api', '').strip()
+    if busca_api:
+        termo = busca_api.lower()
+        produtos_api_filtrados = [
+            item for item in produtos_api
+            if termo in item.get('title', '').lower() or termo in item.get('author', '').lower()
+        ]
+    else:
+        produtos_api_filtrados = produtos_api
+
+    # Paginação dos livros da API (6 por página)
+    paginator_api = Paginator(produtos_api_filtrados, 6)
+    page_api_num = request.GET.get('page_api', 1)
+    try:
+        produtos_api_page = paginator_api.page(page_api_num)
+    except PageNotAnInteger:
+        produtos_api_page = paginator_api.page(1)
+    except EmptyPage:
+        produtos_api_page = paginator_api.page(paginator_api.num_pages)
+
+    # Livros próprios do sistema (Estante local)
+    livros_queryset = Servico.objects.filter(ativo=True)
+
+    # Filtros na Estante Local (Nome, Autor, Categoria, Preço)
+    busca = request.GET.get('busca', '').strip()
+    if busca:
+        livros_queryset = livros_queryset.filter(nome__icontains=busca)
+
+    autor = request.GET.get('autor', '').strip()
+    if autor:
+        livros_queryset = livros_queryset.filter(autor__icontains=autor)
+
+    categorias = Categoria.objects.filter(ativo=True)
+    categoria = request.GET.get('categoria', '').strip()
+    if categoria:
+        livros_queryset = livros_queryset.filter(categoria_id=categoria)
+
+    preco = request.GET.get('preco', '').strip()
+    if preco == 'baixo':
+        livros_queryset = livros_queryset.filter(preco__lte=50)
+    elif preco == 'medio':
+        livros_queryset = livros_queryset.filter(preco__gt=50, preco__lte=250)
+    elif preco == 'alto':
+        livros_queryset = livros_queryset.filter(preco__gt=250)
+
+    # Paginação dos livros locais (6 por página)
+    paginator_local = Paginator(livros_queryset.order_by('-criado_em'), 6)
+    page_local_num = request.GET.get('page_local', 1)
+    try:
+        livros_local_page = paginator_local.page(page_local_num)
+    except PageNotAnInteger:
+        livros_local_page = paginator_local.page(1)
+    except EmptyPage:
+        livros_local_page = paginator_local.page(paginator_local.num_pages)
+
+    # Preservar parâmetros de query nos links de paginação
+    params_api = request.GET.copy()
+    if 'page_api' in params_api:
+        del params_api['page_api']
+    query_api = params_api.urlencode()
+
+    params_local = request.GET.copy()
+    if 'page_local' in params_local:
+        del params_local['page_local']
+    query_local = params_local.urlencode()
+
     return render(request, "produtos.html", {
-        'livros': livros,
-        'produtos_api': produtos_api,
+        'produtos_api': produtos_api_page,
+        'page_api': produtos_api_page,
+        'paginator_api': paginator_api,
+        'query_api': query_api,
+        'busca_api': busca_api,
+        'total_api': len(produtos_api_filtrados),
+
+        'livros': livros_local_page,
+        'page_local': livros_local_page,
+        'paginator_local': paginator_local,
+        'query_local': query_local,
+        'total_local': livros_queryset.count(),
+
+        'categorias': categorias,
+        'categoria': categoria,
+        'busca': busca,
+        'autor': autor,
+        'preco': preco,
         'api_erro': api_erro,
     })
 

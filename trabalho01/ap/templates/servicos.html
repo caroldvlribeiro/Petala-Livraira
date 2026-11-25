@@ -5,7 +5,7 @@
     <div>
         <p class="eyebrow">A estante Pétala</p>
         <h1>Catálogo de livros</h1>
-        <p class="muted">{{ total_servicos }} livros para acompanhar sua próxima fase.</p>
+        <p class="muted">{{ total_servicos }} livro(s) encontrado(s){% if total_catalogo != total_servicos %} de um total de {{ total_catalogo }}{% endif %}.</p>
     </div>
     {% if user.is_authenticated %}
         {% if user.is_staff or user.perfil.tipo_usuario == 'administrador' or user.perfil.tipo_usuario == 'vendedor' %}
@@ -13,17 +13,57 @@
         {% endif %}
     {% endif %}
 </div>
-<form class="search-bar" method="get">
-    <span aria-hidden="true">⌕</span>
-    <input name="busca" value="{{ busca|default:'' }}" placeholder="Buscar por título ou palavra-chave...">
-    <button type="submit">Buscar</button>
-</form>
-<div class="filter-row" style="margin-top:16px">
-    <a class="{% if not preco %}active{% endif %}" href="{% url 'servicos' %}">Todos</a>
-    <a href="?preco=baixo">Até R$ 50</a>
-    <a href="?preco=medio">R$ 50 a R$ 250</a>
-    <a href="?ordem=nome">Ordem alfabética</a>
-</div>
+
+<!-- Filtros de Busca -->
+<section class="filter-card">
+    <form method="get" action="{% url 'servicos' %}">
+        <div class="filter-grid">
+            <div class="filter-group">
+                <label for="filtro-nome">Nome do livro</label>
+                <input id="filtro-nome" class="campo-input" name="busca" value="{{ busca|default:'' }}" placeholder="Ex.: Dom Casmurro, algoritmos...">
+            </div>
+            <div class="filter-group">
+                <label for="filtro-autor">Autor</label>
+                <input id="filtro-autor" class="campo-input" name="autor" value="{{ autor|default:'' }}" placeholder="Ex.: Machado de Assis...">
+            </div>
+            <div class="filter-group">
+                <label for="filtro-categoria">Categoria</label>
+                <select id="filtro-categoria" class="campo-select" name="categoria">
+                    <option value="">Todas as categorias</option>
+                    {% for cat in categorias %}
+                        <option value="{{ cat.id }}" {% if categoria == cat.id|stringformat:"s" %}selected{% endif %}>{{ cat.nome }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="filtro-preco">Faixa de preço</label>
+                <select id="filtro-preco" class="campo-select" name="preco">
+                    <option value="">Qualquer preço</option>
+                    <option value="baixo" {% if preco == 'baixo' %}selected{% endif %}>Até R$ 50,00</option>
+                    <option value="medio" {% if preco == 'medio' %}selected{% endif %}>R$ 50,00 a R$ 250,00</option>
+                    <option value="alto" {% if preco == 'alto' %}selected{% endif %}>Acima de R$ 250,00</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="filtro-ordem">Ordenar por</label>
+                <select id="filtro-ordem" class="campo-select" name="ordem">
+                    <option value="">Mais recentes</option>
+                    <option value="menor" {% if ordem == 'menor' %}selected{% endif %}>Menor preço</option>
+                    <option value="maior" {% if ordem == 'maior' %}selected{% endif %}>Maior preço</option>
+                    <option value="nome" {% if ordem == 'nome' %}selected{% endif %}>Ordem alfabética</option>
+                </select>
+            </div>
+        </div>
+        <div class="filter-actions">
+            {% if busca or autor or categoria or preco or ordem %}
+                <a class="button button-light" href="{% url 'servicos' %}" style="padding: 9px 14px; font-size: 0.88rem;">Limpar filtros</a>
+            {% endif %}
+            <button class="button" type="submit" style="padding: 9px 18px; font-size: 0.88rem;">Aplicar filtros</button>
+        </div>
+    </form>
+</section>
+
+<!-- Grid de Livros -->
 <div class="book-grid">
     {% for livro in livros %}
     <article class="book-card card">
@@ -40,7 +80,7 @@
             <div class="book-actions">
                 <form method="post" action="{% url 'adicionar_carrinho' livro.id %}">
                     {% csrf_token %}
-                    <input type="hidden" name="next" value="{% url 'servicos' %}">
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
                     <button class="button" type="submit">Comprar</button>
                 </form>
                 {% if user.is_authenticated %}
@@ -54,7 +94,36 @@
         </div>
     </article>
     {% empty %}
-        <p class="muted">Nenhum livro encontrado com esses filtros.</p>
+        <p class="muted" style="grid-column: 1 / -1; text-align: center; padding: 40px 0;">Nenhum livro encontrado com esses filtros.</p>
     {% endfor %}
 </div>
+
+<!-- Paginação do Catálogo -->
+{% if page_obj.has_other_pages %}
+<nav class="pagination" aria-label="Navegação de páginas do catálogo">
+    {% if page_obj.has_previous %}
+        <a href="?{% if filtros_query %}{{ filtros_query }}&{% endif %}page={{ page_obj.previous_page_number }}" title="Página anterior">« Anterior</a>
+    {% else %}
+        <span class="disabled">« Anterior</span>
+    {% endif %}
+
+    {% for num in paginator.page_range %}
+        {% if page_obj.number == num %}
+            <span class="current">{{ num }}</span>
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <a href="?{% if filtros_query %}{{ filtros_query }}&{% endif %}page={{ num }}">{{ num }}</a>
+        {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+        <a href="?{% if filtros_query %}{{ filtros_query }}&{% endif %}page={{ page_obj.next_page_number }}" title="Próxima página">Próxima »</a>
+    {% else %}
+        <span class="disabled">Próxima »</span>
+    {% endif %}
+
+    <div class="pagination-info">
+        Página {{ page_obj.number }} de {{ paginator.num_pages }} ({{ total_servicos }} livro(s) no total)
+    </div>
+</nav>
+{% endif %}
 {% endblock %}

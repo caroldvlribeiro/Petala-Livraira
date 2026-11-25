@@ -245,3 +245,59 @@ class AdministradorTests(TestCase):
 
         self.assertEqual(self.client.get(reverse("contatos")).status_code, 200)
         self.assertEqual(self.client.get(reverse("relatorios")).status_code, 200)
+
+
+class FiltrosEPaginacaoTests(TestCase):
+    def setUp(self):
+        self.cat_ficcao = Categoria.objects.create(nome="Ficção", ativo=True)
+        self.cat_tecnologia = Categoria.objects.create(nome="Tecnologia", ativo=True)
+        for i in range(1, 13):
+            Servico.objects.create(
+                nome=f"Livro Teste {i}",
+                autor="Autor Alfa" if i % 2 == 0 else "Autor Beta",
+                preco=Decimal(f"{i * 10}.00"),
+                categoria=self.cat_ficcao if i <= 6 else self.cat_tecnologia,
+                ativo=True,
+                estoque=5,
+            )
+
+    def test_catalogo_filtra_por_nome_autor_categoria_e_preco(self):
+        resp = self.client.get(reverse("servicos"), {"busca": "Teste 1"})
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, "Livro Teste 1")
+
+        resp_autor = self.client.get(reverse("servicos"), {"autor": "Alfa"})
+        self.assertEqual(resp_autor.status_code, 200)
+        self.assertContains(resp_autor, "Autor Alfa")
+
+        resp_cat = self.client.get(reverse("servicos"), {"categoria": self.cat_tecnologia.id})
+        self.assertEqual(resp_cat.status_code, 200)
+        self.assertContains(resp_cat, "Livro Teste 7")
+
+        resp_preco = self.client.get(reverse("servicos"), {"preco": "baixo"})
+        self.assertEqual(resp_preco.status_code, 200)
+
+    def test_catalogo_paginacao(self):
+        resp_p1 = self.client.get(reverse("servicos"), {"page": "1"})
+        self.assertEqual(resp_p1.status_code, 200)
+        self.assertEqual(len(resp_p1.context["livros"]), 8)
+
+        resp_p2 = self.client.get(reverse("servicos"), {"page": "2"})
+        self.assertEqual(resp_p2.status_code, 200)
+        self.assertEqual(len(resp_p2.context["livros"]), 4)
+
+    def test_produtos_paginacao_e_filtros(self):
+        resp = self.client.get(reverse("produtos"))
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn("produtos_api", resp.context)
+        self.assertIn("page_local", resp.context)
+        self.assertIn("paginator_local", resp.context)
+
+        resp_local = self.client.get(reverse("produtos"), {"busca": "Teste 2", "autor": "Alfa"})
+        self.assertEqual(resp_local.status_code, 200)
+        self.assertContains(resp_local, "Livro Teste 2")
+
+        resp_p1 = self.client.get(reverse("produtos"), {"page_local": "1"})
+        self.assertEqual(resp_p1.status_code, 200)
+        self.assertEqual(len(resp_p1.context["livros"]), 6)
+
