@@ -47,132 +47,132 @@
             </div>
         </aside>
         <main class="main-content">
-            <div class="main-body">
-                <div class="mobile-header">
-                    <a class="brand-link" href="{% url 'index' %}"><span class="brand-mark">✿</span><strong>Pétala</strong></a>
-                    {% if user.is_authenticated %}
-                        <a href="{% url 'carrinho' %}" class="mobile-cart">🛍</a>
-                    {% else %}
-                        <a href="{% url 'login' %}?next={% url 'carrinho' %}" class="mobile-cart">🛍</a>
-                    {% endif %}
-                </div>
-                {% if messages %}
-                    <div class="flash-messages">
-                        {% for message in messages %}<p class="flash-{{ message.tags }}">{{ message }}</p>{% endfor %}
-                    </div>
+            <div class="mobile-header">
+                <a class="brand-link" href="{% url 'index' %}"><span class="brand-mark">✿</span><strong>Pétala</strong></a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'carrinho' %}" class="mobile-cart">🛍</a>
+                {% else %}
+                    <a href="{% url 'login' %}?next={% url 'carrinho' %}" class="mobile-cart">🛍</a>
                 {% endif %}
-                {% block conteudo %}{% endblock %}
             </div>
-
-            <!-- Rodapé Profissional Pétala Livraria -->
-            <footer class="site-footer" role="contentinfo">
-                <div class="footer-top">
-                    <!-- Coluna 1: Sobre & Identidade -->
-                    <div class="footer-col brand-col">
-                        <div class="footer-brand">
-                            <span class="footer-mark">✿</span>
-                            <div>
-                                <h3 class="footer-title">Pétala Livraria</h3>
-                                <p class="footer-tagline">Histórias que florescem com você</p>
-                            </div>
-                        </div>
-                        <p class="footer-desc">
-                            Uma livraria independente dedicada a cultivar o hábito da leitura, valorizar a literatura brasileira e conectar leitores a obras inspiradoras.
-                        </p>
-                        <div class="footer-badges">
-                            <span class="footer-badge">Livraria Independente</span>
-                            <span class="footer-badge">Compra 100% Segura</span>
-                        </div>
-                    </div>
-
-                    <!-- Coluna 2: Navegação Rápida -->
-                    <div class="footer-col">
-                        <h4 class="footer-heading">Navegação</h4>
-                        <ul class="footer-links">
-                            <li><a href="{% url 'index' %}">Início</a></li>
-                            <li><a href="{% url 'servicos' %}">Catálogo de Livros</a></li>
-                            <li><a href="{% url 'produtos' %}">Descobrir Livros (API)</a></li>
-                            <li><a href="{% url 'integrantes' %}">Nossa Equipe</a></li>
-                            <li><a href="{% url 'novoContato' %}">Fale Conosco</a></li>
-                            {% if user.is_authenticated %}
-                                <li><a href="{% url 'pedidos' %}">Meus Pedidos</a></li>
-                                <li><a href="{% url 'dashboard' %}">Minha Conta</a></li>
-                            {% else %}
-                                <li><a href="{% url 'login' %}">Acessar Conta</a></li>
-                            {% endif %}
-                        </ul>
-                    </div>
-
-                    <!-- Coluna 3: Atendimento & Horários -->
-                    <div class="footer-col">
-                        <h4 class="footer-heading">Atendimento</h4>
-                        <ul class="footer-contact">
-                            <li>
-                                <span class="contact-icon">📍</span>
-                                <span>Alameda das Flores, 142 — Jardim das Artes<br>São Paulo - SP, CEP 01234-567</span>
-                            </li>
-                            <li>
-                                <span class="contact-icon">📞</span>
-                                <a href="tel:11987654321">(11) 98765-4321 (WhatsApp)</a>
-                            </li>
-                            <li>
-                                <span class="contact-icon">✉</span>
-                                <a href="mailto:contato@petalalivraria.com.br">contato@petalalivraria.com.br</a>
-                            </li>
-                            <li>
-                                <span class="contact-icon">🕒</span>
-                                <span>Seg. a Sex.: 09h às 19h<br>Sábados: 09h às 14h</span>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <!-- Coluna 4: Redes Sociais & Pagamento -->
-                    <div class="footer-col">
-                        <h4 class="footer-heading">Conecte-se</h4>
-                        <p class="footer-social-intro">Acompanhe nossas resenhas, novidades e eventos:</p>
-                        <div class="social-links">
-                            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-btn" title="Instagram da Pétala Livraria">
-                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-                                <span>Instagram</span>
-                            </a>
-                            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="social-btn" title="X / Twitter da Pétala Livraria">
-                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l11.733 16h4.267l-11.733 -16z"></path><path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772"></path></svg>
-                                <span>X (Twitter)</span>
-                            </a>
-                            <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" class="social-btn" title="TikTok da Pétala Livraria">
-                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"></path></svg>
-                                <span>TikTok</span>
-                            </a>
-                            <a href="https://goodreads.com" target="_blank" rel="noopener noreferrer" class="social-btn" title="Goodreads da Pétala Livraria">
-                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
-                                <span>Goodreads</span>
-                            </a>
-                        </div>
-
-                        <div class="payment-methods">
-                            <span class="payment-title">Formas de Pagamento</span>
-                            <div class="payment-badges">
-                                <span class="pay-chip" title="Pagamento instantâneo via Pix">⚡ Pix</span>
-                                <span class="pay-chip" title="Cartão de Crédito">💳 Crédito (até 6x)</span>
-                                <span class="pay-chip" title="Boleto Bancário">📄 Boleto</span>
-                            </div>
-                        </div>
-                    </div>
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for message in messages %}<p class="flash-{{ message.tags }}">{{ message }}</p>{% endfor %}
                 </div>
-
-                <!-- Barra Inferior do Rodapé -->
-                <div class="footer-bottom">
-                    <div class="footer-copy">
-                        <p>© 2026 <strong>Pétala Livraria Ltda.</strong> Todos os direitos reservados. CNPJ: 42.123.456/0001-89</p>
-                        <p class="footer-subcopy">Preços e condições válidos exclusivamente para compras online. Imagens meramente ilustrativas.</p>
-                    </div>
-                    <div class="footer-security">
-                        <span class="sec-badge">🔒 Ambiente 100% Seguro (SSL)</span>
-                        <span class="sec-badge">🍃 Livraria Sustentável</span>
-                    </div>
-                </div>
-            </footer>
+            {% endif %}
+            {% block conteudo %}{% endblock %}
         </main>
     </div>
+
+    <!-- Rodapé em largura total da tela -->
+    <footer class="site-footer" role="contentinfo">
+        <div class="footer-container">
+            <div class="footer-top">
+                <!-- Coluna 1: Sobre & Identidade -->
+                <div class="footer-col brand-col">
+                    <div class="footer-brand">
+                        <span class="footer-mark">✿</span>
+                        <div>
+                            <h3 class="footer-title">Pétala Livraria</h3>
+                            <p class="footer-tagline">Histórias que florescem com você</p>
+                        </div>
+                    </div>
+                    <p class="footer-desc">
+                        Uma livraria independente dedicada a cultivar o hábito da leitura, valorizar a literatura brasileira e conectar leitores a obras inspiradoras.
+                    </p>
+                    <div class="footer-badges">
+                        <span class="footer-badge">Livraria Independente</span>
+                        <span class="footer-badge">Compra 100% Segura</span>
+                    </div>
+                </div>
+
+                <!-- Coluna 2: Navegação Rápida -->
+                <div class="footer-col">
+                    <h4 class="footer-heading">Navegação</h4>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'index' %}">Início</a></li>
+                        <li><a href="{% url 'servicos' %}">Catálogo de Livros</a></li>
+                        <li><a href="{% url 'produtos' %}">Descobrir Livros (API)</a></li>
+                        <li><a href="{% url 'integrantes' %}">Nossa Equipe</a></li>
+                        <li><a href="{% url 'novoContato' %}">Fale Conosco</a></li>
+                        {% if user.is_authenticated %}
+                            <li><a href="{% url 'pedidos' %}">Meus Pedidos</a></li>
+                            <li><a href="{% url 'dashboard' %}">Minha Conta</a></li>
+                        {% else %}
+                            <li><a href="{% url 'login' %}">Acessar Conta</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+
+                <!-- Coluna 3: Atendimento & Horários -->
+                <div class="footer-col">
+                    <h4 class="footer-heading">Atendimento</h4>
+                    <ul class="footer-contact">
+                        <li>
+                            <span class="contact-icon">📍</span>
+                            <span>Alameda das Flores, 142 — Jardim das Artes<br>São Paulo - SP, CEP 01234-567</span>
+                        </li>
+                        <li>
+                            <span class="contact-icon">📞</span>
+                            <a href="tel:11987654321">(11) 98765-4321 (WhatsApp)</a>
+                        </li>
+                        <li>
+                            <span class="contact-icon">✉</span>
+                            <a href="mailto:contato@petalalivraria.com.br">contato@petalalivraria.com.br</a>
+                        </li>
+                        <li>
+                            <span class="contact-icon">🕒</span>
+                            <span>Seg. a Sex.: 09h às 19h<br>Sábados: 09h às 14h</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Coluna 4: Redes Sociais & Pagamento -->
+                <div class="footer-col">
+                    <h4 class="footer-heading">Conecte-se</h4>
+                    <p class="footer-social-intro">Acompanhe nossas resenhas, novidades e eventos:</p>
+                    <div class="social-links">
+                        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-btn" title="Instagram da Pétala Livraria">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                            <span>Instagram</span>
+                        </a>
+                        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="social-btn" title="X / Twitter da Pétala Livraria">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l11.733 16h4.267l-11.733 -16z"></path><path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772"></path></svg>
+                            <span>X (Twitter)</span>
+                        </a>
+                        <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" class="social-btn" title="TikTok da Pétala Livraria">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"></path></svg>
+                            <span>TikTok</span>
+                        </a>
+                        <a href="https://goodreads.com" target="_blank" rel="noopener noreferrer" class="social-btn" title="Goodreads da Pétala Livraria">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                            <span>Goodreads</span>
+                        </a>
+                    </div>
+
+                    <div class="payment-methods">
+                        <span class="payment-title">Formas de Pagamento</span>
+                        <div class="payment-badges">
+                            <span class="pay-chip" title="Pagamento instantâneo via Pix">⚡ Pix</span>
+                            <span class="pay-chip" title="Cartão de Crédito">💳 Crédito (até 6x)</span>
+                            <span class="pay-chip" title="Boleto Bancário">📄 Boleto</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Barra Inferior do Rodapé -->
+            <div class="footer-bottom">
+                <div class="footer-copy">
+                    <p>© 2026 <strong>Pétala Livraria Ltda.</strong> Todos os direitos reservados. CNPJ: 42.123.456/0001-89</p>
+                    <p class="footer-subcopy">Preços e condições válidos exclusivamente para compras online. Imagens meramente ilustrativas.</p>
+                </div>
+                <div class="footer-security">
+                    <span class="sec-badge">🔒 Ambiente 100% Seguro (SSL)</span>
+                    <span class="sec-badge">🍃 Livraria Sustentável</span>
+                </div>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>
