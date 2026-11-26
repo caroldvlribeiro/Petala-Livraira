@@ -65,6 +65,20 @@ def is_administrator(user):
 
 # Create your views here.
 
+from django.http import Http404
+
+from django.shortcuts import render
+from django.http import Http404, HttpResponseServerError
+
+# Custom error page view
+def error_page(request, exception=None):
+    # Use the new error template
+    return render(request, "error.html", status=404)
+
+# Deliberate error view for testing
+def deliberate_error(request):
+    raise RuntimeError("Deliberate failure for testing error handling")
+
 def index(request):
     livros = Servico.objects.filter(ativo=True).order_by('-criado_em')[:4]
     return render(request, "index.html", {'livros_destaque': livros})
