@@ -176,6 +176,16 @@ button {
   color: var(--burgundy)
 }
 
+.button-danger {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+.button-danger:hover {
+  background: #b91c1c;
+  filter: brightness(1.08);
+}
+
 .flash-messages {
   margin-bottom: 20px
 }
