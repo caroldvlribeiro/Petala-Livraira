@@ -88,6 +88,16 @@ class CustomPasswordResetView(SuccessMessageMixin, auth_views.PasswordResetView)
         }
         try:
             form.save(**opts)
+            # Imprime o link diretamente no console do Render sem quebras quoted-printable
+            for user in form.get_users(form.cleaned_data.get("email")):
+                from django.contrib.auth.tokens import default_token_generator
+                from django.utils.http import urlsafe_base64_encode
+                from django.utils.encoding import force_bytes
+                from django.urls import reverse
+                uid = urlsafe_base64_encode(force_bytes(user.pk))
+                tok = default_token_generator.make_token(user)
+                direct_url = f"https://petala-livraria.onrender.com/login/recuperar-senha/{uid}/{tok}/"
+                print(f"\n========================================\n[LINK DE RECUPERACAO - SEM QUEBRA]:\n{direct_url}\n========================================\n", flush=True)
             logger.info("E-mail de recuperação de senha processado para %s", form.cleaned_data.get("email"))
         except Exception as exc:
             logger.exception("Falha crítica ao enviar e-mail de recuperação de senha: %s", exc)
