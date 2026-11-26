@@ -65,8 +65,8 @@
     width: 100%;
     border: none;
     border-radius: 8px;
-    background: var(--green-700);
-    color: #fff;
+    background: var(--burgundy);
+    color: var(--cream);
     font-size: 1.15rem;
     font-weight: 700;
     padding: 14px;
@@ -77,7 +77,7 @@
 }
 
 .contato-form button:hover {
-    background: var(--green-900);
+    filter: brightness(1.12);
     transform: translateY(-1px);
 }
 
