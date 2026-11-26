@@ -38,7 +38,7 @@
 
 .tabela-contatos thead th {
     background: var(--green-900);
-    color: #ffffff;
+    color: #1f0303;
     font-weight: 700;
     text-align: center;
 }
@@ -48,7 +48,7 @@
 }
 
 .tabela-contatos tbody tr:nth-child(even) td {
-    background: #f5faf7;
+    background: #000b05;
 }
 
 /* Botões de ação — padrão consistente com servicos.css */
