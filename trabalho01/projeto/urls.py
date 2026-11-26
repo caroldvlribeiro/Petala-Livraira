@@ -27,3 +27,8 @@ urlpatterns = [
     path('login/', include("login.urls")),
     re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
 ]
+
+handler400 = 'ap.views.bad_request'
+handler403 = 'ap.views.permission_denied'
+handler404 = 'ap.views.error_page'
+handler500 = 'ap.views.server_error'

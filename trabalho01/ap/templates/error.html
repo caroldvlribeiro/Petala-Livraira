@@ -1,19 +1,48 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8" />
-    <title>Erro - Página não encontrada</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ded4ef">
+    <title>{{ error_code }} — {{ error_title }} | Pétala Livraria</title>
+    <link rel="stylesheet" href="{% static 'css/error.css' %}">
 </head>
-<body class="app-shell">
-    <main class="main-content">
-        <section class="error-page" style="text-align:center;margin-top:5rem;">
-            <h1 style="font-size:4rem;color:var(--burgundy);">404 – Página não encontrada</h1>
-            <p style="font-size:1.2rem;color:var(--navy);margin:1rem 0;">
-                O recurso que você tentou acessar não existe.
-            </p>
-            <a href="/" class="button">Voltar à página inicial</a>
+<body>
+    <main class="error-page">
+        <a class="error-brand" href="/" aria-label="Pétala Livraria — página inicial">
+            <span aria-hidden="true">✿</span> Pétala <small>Livraria</small>
+        </a>
+
+        <section class="error-content" aria-labelledby="error-title">
+            <div class="error-illustration">
+                <svg class="error-cat" viewBox="0 0 340 300" role="img" aria-labelledby="cat-title">
+                    <title id="cat-title">Um gatinho preto procurando o caminho</title>
+                    <ellipse cx="164" cy="270" rx="82" ry="13" fill="#17131b"/>
+                    <path d="M92 207c-8-7-8-20 1-28l16-15c12-12 17-28 17-46v-39L111 54c-3-3-1-8 3-7l29 12 20-21c3-3 8-1 8 3l2 27 23-10c4-2 8 2 6 6l-12 27c19 15 31 39 31 67v19l24 17c7 5 9 14 4 21-4 6-13 8-19 4l-36-23c-7-5-11-13-11-22v-8c-15 10-34 14-52 10l-18 46c-3 8-12 12-20 9-8-3-12-12-9-20l8-24z" fill="#17131b"/>
+                    <path d="M202 116c13-23 23-49 37-61 4-4 10-1 9 5l-3 14 18-12c5-3 10 2 7 7l-12 17 17-4c6-1 9 6 4 10l-25 20c-5 4-11 7-18 8l-30 5z" fill="#17131b"/>
+                    <path d="M92 207l-12 16c-4 6-2 14 4 17 6 3 14 1 17-5l11-19m72-39 9 29c2 7 10 11 17 8 7-3 10-11 7-18l-11-27" fill="#17131b"/>
+                    <ellipse cx="142" cy="91" rx="5" ry="9" fill="#fffdf8"/>
+                    <ellipse cx="166" cy="89" rx="5" ry="9" fill="#fffdf8"/>
+                    <circle cx="142" cy="93" r="2.5" fill="#17131b"/>
+                    <circle cx="166" cy="91" r="2.5" fill="#17131b"/>
+                </svg>
+                <span class="error-sparkle sparkle-one" aria-hidden="true">✦</span>
+                <span class="error-sparkle sparkle-two" aria-hidden="true">✧</span>
+            </div>
+
+            <div class="error-copy">
+                <p class="error-code">{{ error_code }}</p>
+                <p class="error-eyebrow">Ops! Parece que algo saiu do caminho.</p>
+                <h1 id="error-title">{{ error_title }}</h1>
+                <p class="error-message">{{ error_message }}</p>
+                <div class="error-actions">
+                    <a class="error-button" href="/">Voltar para o início <span aria-hidden="true">→</span></a>
+                    <a class="error-link" href="/livros/">Explorar livros</a>
+                </div>
+            </div>
         </section>
+        <p class="error-footer">Pétala Livraria <span aria-hidden="true">·</span> Histórias que florescem com você</p>
     </main>
 </body>
 </html>

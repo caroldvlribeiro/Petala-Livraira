@@ -31,6 +31,3 @@ urlpatterns = [
     path("categoria-api/<int:id>", views.categoria_api, name="categoria_api"),
     path("relatorios/",views.relatorios, name='relatorios'),
 ]
-
-handler404 = 'ap.views.error_page'
-

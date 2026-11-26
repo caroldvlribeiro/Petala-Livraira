@@ -65,15 +65,55 @@ def is_administrator(user):
 
 # Create your views here.
 
-from django.http import Http404
-
 from django.shortcuts import render
-from django.http import Http404, HttpResponseServerError
 
-# Custom error page view
+def _render_error_page(request, code, title, message):
+    return render(
+        request,
+        "error.html",
+        {
+            "error_code": code,
+            "error_title": title,
+            "error_message": message,
+        },
+        status=code,
+    )
+
+
+def bad_request(request, exception=None):
+    return _render_error_page(
+        request,
+        400,
+        "Não conseguimos entender seu pedido",
+        "Confira as informações e tente novamente. Se o problema continuar, volte para a página inicial.",
+    )
+
+
+def permission_denied(request, exception=None):
+    return _render_error_page(
+        request,
+        403,
+        "Este caminho é reservado",
+        "Você não tem permissão para acessar esta página. Explore nosso catálogo enquanto isso.",
+    )
+
+
 def error_page(request, exception=None):
-    # Use the new error template
-    return render(request, "error.html", status=404)
+    return _render_error_page(
+        request,
+        404,
+        "Página não encontrada",
+        "O endereço pode estar incorreto ou a página pode ter mudado de lugar. Vamos encontrar outra história para você.",
+    )
+
+
+def server_error(request):
+    return _render_error_page(
+        request,
+        500,
+        "Tivemos um imprevisto",
+        "Nossa equipe já pode cuidar disso. Tente novamente em alguns instantes ou volte para a página inicial.",
+    )
 
 # Deliberate error view for testing
 def deliberate_error(request):

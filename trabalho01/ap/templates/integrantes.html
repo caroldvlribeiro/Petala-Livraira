@@ -9,51 +9,61 @@
 {% endblock %}
 
 {% block conteudo %}
-    <h2 class="integrantes-titulo">Nossa Equipe</h2>
+    <div class="integrantes-page">
+        <header class="integrantes-intro">
+            <p class="integrantes-eyebrow">Quem faz a Pétala florescer</p>
+            <h1 class="integrantes-titulo">Nossa equipe</h1>
+            <p class="integrantes-descricao">Pessoas apaixonadas por livros, encontros e histórias que ficam com a gente.</p>
+        </header>
 
-    {% if integrantes_erro %}
-        <p class="flash-warning flash-messages">{{ integrantes_erro }}</p>
-    {% endif %}
+        {% if integrantes_erro %}
+            <p class="integrantes-alerta flash-warning flash-messages" role="status">{{ integrantes_erro }}</p>
+        {% endif %}
 
-    <div class="integrantes-container">
-        {% for integrante in integrantes %}
-            <div class="integrante-card">
-                {% if integrante.foto_url %}
-                    <img src="{{ integrante.foto_url }}" alt="{{ integrante.nome }}" class="integrante-foto">
-                {% else %}
-                    <div class="integrante-avatar" aria-hidden="true">{{ integrante.nome|first|upper }}</div>
-                {% endif %}
-                <div class="integrante-info">
-                    <p class="integrante-nome">{{ integrante.nome }}</p>
-                    <p class="integrante-cargo">{{ integrante.cargo }}</p>
-                    <p class="integrante-bio">{{ integrante.biografia }}</p>
-                </div>
-                {% if user.is_authenticated %}
-                    {% if user.is_staff or user.perfil.tipo_usuario == 'administrador' %}
-                        {% if integrante.id %}
-                            <a href="{% url 'editarIntegrante' integrante.id %}" class="btn-adicionar">Editar</a>
-                            <form method="POST" action="{% url 'delIntegrante' integrante.id %}" onsubmit="return confirm('Deseja realmente excluir este integrante?')">
-                                {% csrf_token %}
-                                <button type="submit">Excluir</button>
-                            </form>
-                        {% elif integrante.vendedor and integrante.usuario_id %}
-                            <form method="POST" action="{% url 'excluirVendedor' integrante.usuario_id %}" onsubmit="return confirm('Deseja excluir este vendedor e sua conta?')">
-                                {% csrf_token %}
-                                <button type="submit">Excluir vendedor</button>
-                            </form>
+        <div class="integrantes-container">
+            {% for integrante in integrantes %}
+                <article class="integrante-card">
+                    <div class="integrante-retrato">
+                        {% if integrante.foto_url %}
+                            <img src="{{ integrante.foto_url }}" alt="Foto de {{ integrante.nome }}" class="integrante-foto">
+                        {% else %}
+                            <div class="integrante-avatar" aria-hidden="true">{{ integrante.nome|first|upper }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="integrante-info">
+                        <h2 class="integrante-nome">{{ integrante.nome }}</h2>
+                        <p class="integrante-cargo">{{ integrante.cargo }}</p>
+                        <p class="integrante-bio">{{ integrante.biografia }}</p>
+                    </div>
+                    {% if user.is_authenticated %}
+                        {% if user.is_staff or user.perfil.tipo_usuario == 'administrador' %}
+                            <div class="integrante-acoes">
+                                {% if integrante.id %}
+                                    <a href="{% url 'editarIntegrante' integrante.id %}" class="btn-adicionar">Editar</a>
+                                    <form method="POST" action="{% url 'delIntegrante' integrante.id %}" onsubmit="return confirm('Deseja realmente excluir este integrante?')">
+                                        {% csrf_token %}
+                                        <button class="btn-excluir" type="submit">Excluir</button>
+                                    </form>
+                                {% elif integrante.vendedor and integrante.usuario_id %}
+                                    <form method="POST" action="{% url 'excluirVendedor' integrante.usuario_id %}" onsubmit="return confirm('Deseja excluir este vendedor e sua conta?')">
+                                        {% csrf_token %}
+                                        <button class="btn-excluir" type="submit">Excluir vendedor</button>
+                                    </form>
+                                {% endif %}
+                            </div>
                         {% endif %}
                     {% endif %}
-                {% endif %}
-            </div>
-        {% empty %}
-            <p class="integrantes-vazio">Nenhum integrante cadastrado.</p>
-        {% endfor %}
-    </div>
-    {% if user.is_authenticated %}
-        {% if user.is_staff or user.perfil.tipo_usuario == 'administrador' %}
-            <div class="acao-adicionar">
-                <a href="{% url 'addIntegrante' %}" class="btn-adicionar">+ Adicionar Integrante</a>
-            </div>
+                </article>
+            {% empty %}
+                <p class="integrantes-vazio">Ainda não há integrantes para apresentar por aqui.</p>
+            {% endfor %}
+        </div>
+        {% if user.is_authenticated %}
+            {% if user.is_staff or user.perfil.tipo_usuario == 'administrador' %}
+                <div class="acao-adicionar">
+                    <a href="{% url 'addIntegrante' %}" class="btn-adicionar">+ Adicionar integrante</a>
+                </div>
+            {% endif %}
         {% endif %}
-    {% endif %}
+    </div>
 {% endblock %}

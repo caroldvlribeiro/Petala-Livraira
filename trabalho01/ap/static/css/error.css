@@ -1,0 +1,252 @@
+:root {
+    color-scheme: light;
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: #211b2a;
+    background: #ded4ef;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    min-width: 320px;
+    min-height: 100vh;
+    margin: 0;
+    background:
+        radial-gradient(ellipse at 18% 45%, rgba(255, 255, 255, .36), transparent 37%),
+        #ded4ef;
+}
+
+a {
+    color: inherit;
+}
+
+.error-page {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100vh;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 46px clamp(24px, 7vw, 88px) 28px;
+}
+
+.error-brand {
+    position: absolute;
+    top: 34px;
+    left: clamp(24px, 7vw, 88px);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #211b2a;
+    font-size: 1.15rem;
+    font-weight: 750;
+    text-decoration: none;
+}
+
+.error-brand span {
+    color: #674a79;
+    font-size: 1.6rem;
+}
+
+.error-brand small {
+    align-self: flex-end;
+    margin: 0 0 2px -5px;
+    color: #674a79;
+    font-size: .68rem;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+}
+
+.error-content {
+    display: grid;
+    grid-template-columns: minmax(240px, .95fr) minmax(300px, 1fr);
+    align-items: center;
+    gap: clamp(34px, 7vw, 96px);
+    width: 100%;
+    max-width: 920px;
+    margin: 35px auto 0;
+}
+
+.error-illustration {
+    position: relative;
+    display: grid;
+    min-height: 300px;
+    place-items: center;
+}
+
+.error-cat {
+    display: block;
+    width: min(100%, 340px);
+    height: auto;
+    overflow: visible;
+    filter: drop-shadow(0 16px 0 rgba(68, 45, 80, .05));
+}
+
+.error-sparkle {
+    position: absolute;
+    color: #765d8b;
+}
+
+.sparkle-one {
+    top: 12%;
+    right: 12%;
+    font-size: 1.7rem;
+}
+
+.sparkle-two {
+    bottom: 20%;
+    left: 3%;
+    font-size: 1.4rem;
+}
+
+.error-copy {
+    max-width: 440px;
+}
+
+.error-code {
+    margin: 0;
+    font-size: clamp(5.5rem, 13vw, 8.5rem);
+    font-weight: 800;
+    letter-spacing: -.075em;
+    line-height: .9;
+}
+
+.error-eyebrow {
+    margin: 22px 0 4px;
+    color: #674a79;
+    font-size: .82rem;
+    font-weight: 750;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+}
+
+.error-copy h1 {
+    margin: 0;
+    font-size: clamp(1.7rem, 4vw, 2.45rem);
+    line-height: 1.15;
+}
+
+.error-message {
+    max-width: 360px;
+    margin: 14px 0 0;
+    color: #50465b;
+    font-size: 1.05rem;
+    line-height: 1.65;
+}
+
+.error-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 18px;
+    margin-top: 26px;
+}
+
+.error-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 48px;
+    padding: 0 19px;
+    border-radius: 999px;
+    background: #211b2a;
+    color: #fffdf8;
+    font-size: .95rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: transform .2s ease, background .2s ease;
+}
+
+.error-button:hover,
+.error-button:focus-visible {
+    transform: translateY(-2px);
+    background: #493657;
+}
+
+.error-link {
+    color: #44364f;
+    font-size: .92rem;
+    font-weight: 650;
+    text-underline-offset: 4px;
+}
+
+.error-footer {
+    margin: 50px 0 0;
+    color: #71667a;
+    font-size: .8rem;
+    text-align: center;
+}
+
+.error-footer span {
+    padding: 0 5px;
+}
+
+@media (max-width: 680px) {
+    .error-page {
+        justify-content: flex-start;
+        padding-top: 84px;
+    }
+
+    .error-content {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        max-width: 440px;
+        margin-top: 10px;
+        text-align: center;
+    }
+
+    .error-illustration {
+        min-height: 0;
+        height: 220px;
+    }
+
+    .error-cat {
+        width: min(75%, 260px);
+        max-height: 220px;
+    }
+
+    .sparkle-one {
+        right: 12%;
+    }
+
+    .sparkle-two {
+        bottom: 10%;
+        left: 12%;
+    }
+
+    .error-copy {
+        margin: 0 auto;
+    }
+
+    .error-code {
+        font-size: clamp(5rem, 23vw, 7rem);
+    }
+
+    .error-message {
+        margin-right: auto;
+        margin-left: auto;
+    }
+
+    .error-actions {
+        justify-content: center;
+    }
+
+    .error-footer {
+        margin-top: 34px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+    }
+}

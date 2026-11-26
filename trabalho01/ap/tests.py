@@ -1,11 +1,48 @@
 from decimal import Decimal
 
 from django.contrib.auth.models import User
-from django.test import TestCase
+from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse
+from django.test.utils import override_settings
 
 from .models import Categoria, Pedido, Servico
+from .views import bad_request, error_page, permission_denied, server_error
 from login.models import Perfil
+
+
+class ErrorPageTests(TestCase):
+    @override_settings(DEBUG=False)
+    def test_unknown_url_uses_the_custom_not_found_page(self):
+        response = self.client.get("/not-found-test/")
+
+        self.assertEqual(response.status_code, 404)
+        self.assertContains(response, "Página não encontrada", status_code=404)
+        self.assertContains(response, "error-cat", status_code=404)
+
+    @override_settings(DEBUG=False)
+    def test_server_error_uses_the_custom_page(self):
+        response = Client(raise_request_exception=False).get("/error-test/")
+
+        self.assertEqual(response.status_code, 500)
+        self.assertContains(response, "Tivemos um imprevisto", status_code=500)
+
+    def test_error_handlers_render_the_branded_page_with_the_correct_status(self):
+        request = RequestFactory().get("/")
+        handlers = (
+            (bad_request, 400),
+            (permission_denied, 403),
+            (error_page, 404),
+            (server_error, 500),
+        )
+
+        for handler, status_code in handlers:
+            with self.subTest(status_code=status_code):
+                response = handler(request)
+
+                self.assertEqual(response.status_code, status_code)
+                self.assertContains(response, str(status_code), status_code=status_code)
+                self.assertContains(response, "/static/css/error.", status_code=status_code)
+                self.assertContains(response, "error-cat", status_code=status_code)
 
 
 class CompraLivroTests(TestCase):
