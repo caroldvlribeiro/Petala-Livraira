@@ -24,10 +24,22 @@ def upload_imagem_storage(livro):
         return None
     try:
         nome_arquivo = f"capas/{livro.id}_{Path(livro.imagem.name).name}"
+        dados = None
         caminho_local = getattr(livro.imagem, "path", None)
         if caminho_local and os.path.exists(caminho_local):
             with open(caminho_local, "rb") as f:
                 dados = f.read()
+        elif hasattr(livro.imagem, "open"):
+            try:
+                livro.imagem.open("rb")
+                dados = livro.imagem.read()
+            except Exception:
+                pass
+            finally:
+                if hasattr(livro.imagem, "close"):
+                    livro.imagem.close()
+
+        if dados:
             supabase.storage.from_("livros").upload(
                 path=nome_arquivo,
                 file=dados,

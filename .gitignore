@@ -36,3 +36,7 @@ Thumbs.db
 trabalho01/db.sqlite3
 trabalho01/db.sqlite3.bak
 trabalho01/media/
+dump_data_backup*.json
+trabalho01/dump_data_backup*.json
+*.zip
+
