@@ -32,3 +32,7 @@ media/
 # OS
 .DS_Store
 Thumbs.db
+
+trabalho01/db.sqlite3
+trabalho01/db.sqlite3.bak
+trabalho01/media/
