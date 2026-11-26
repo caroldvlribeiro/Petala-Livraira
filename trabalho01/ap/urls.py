@@ -2,6 +2,8 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    path("error-test/", views.deliberate_error, name="deliberate_error"),
+    path("error-test/", views.deliberate_error, name="deliberate_error"),
     path("", views.index, name="index"),
     path("livros/", views.servicos, name="servicos"),
     path("servicos", views.servicos, name="servicos"),
@@ -29,3 +31,6 @@ urlpatterns = [
     path("categoria-api/<int:id>", views.categoria_api, name="categoria_api"),
     path("relatorios/",views.relatorios, name='relatorios'),
 ]
+
+handler404 = 'ap.views.error_page'
+
