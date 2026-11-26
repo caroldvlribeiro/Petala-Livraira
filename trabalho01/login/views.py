@@ -88,9 +88,9 @@ class CustomPasswordResetView(SuccessMessageMixin, auth_views.PasswordResetView)
         }
         try:
             form.save(**opts)
+            logger.info("E-mail de recuperação de senha processado para %s", form.cleaned_data.get("email"))
         except Exception as exc:
-            logger.error("Erro ao enviar e-mail de recuperação de senha: %s", exc)
-            # Não expor detalhes de SMTP ao usuário, redirecionar com mensagem segura
+            logger.exception("Falha crítica ao enviar e-mail de recuperação de senha: %s", exc)
         return redirect(self.get_success_url())
 
     def form_invalid(self, form):
