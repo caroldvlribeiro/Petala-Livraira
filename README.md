@@ -11,8 +11,6 @@
   [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Supabase-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://supabase.com/)
   [![Render](https://img.shields.io/badge/Render-Deploy_Live-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://petala-livraira.onrender.com/)
   [![Tests](https://img.shields.io/badge/Testes-24_Passando-success?style=for-the-badge&logo=pytest&logoColor=white)](#-testes-automatizados)
-  [![License](https://img.shields.io/badge/Licen%C3%A7a-MIT-blue?style=for-the-badge)](#-licen%C3%A7a)
-
   <br />
 
   **Plataforma web completa para livraria e catálogo literário**, desenvolvida em **Python/Django**, unindo e-commerce moderno, controle de acesso em três níveis (Admin, Vendedor, Cliente), integração resiliente com a **Open Library API**, carrinho de compras dinâmico e armazenamento em nuvem no **Supabase**.
@@ -485,14 +483,9 @@ O design da **Pétala Livraria** adota uma paleta calorosa e sofisticada inspira
 Projeto concebido e desenvolvido com dedicação como trabalho acadêmico e portfólio profissional:
 
 - **Desenvolvedor:** Carolina / Equipe Pétala Livraria
-- **GitHub:** [@niludev02](https://github.com/niludev02)
 - **Live Demo:** [petala-livraira.onrender.com](https://petala-livraira.onrender.com/)
 
 ---
-
-## 📄 Licença
-
-Este projeto é distribuído sob os termos da licença **MIT**. Consulte o arquivo de licença para mais detalhes.
 
 <div align="center">
   <sub>Feito com ☕, 📖 e amor pela literatura. © 2026 Pétala Livraria.</sub>
