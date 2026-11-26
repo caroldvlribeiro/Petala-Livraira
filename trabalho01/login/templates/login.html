@@ -26,6 +26,12 @@
             </div>
         {% endfor %}
 
+        <div style="text-align:right;margin:-6px 0 16px">
+            <a href="{% url 'password_reset' %}" style="color:var(--burgundy);font-size:0.88rem;font-weight:600;text-decoration:none">
+                Esqueci minha senha?
+            </a>
+        </div>
+
         {% if form.non_field_errors %}
             <div style="color:var(--burgundy);font-size:0.88rem;margin-bottom:16px;padding:10px;background:#f8e6e1;border-radius:8px">
                 {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}

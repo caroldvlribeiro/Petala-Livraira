@@ -57,9 +57,41 @@ class CustomPasswordChangeView(SuccessMessageMixin, auth_views.PasswordChangeVie
 class CustomPasswordResetView(SuccessMessageMixin, auth_views.PasswordResetView):
     template_name = "password_reset_form.html"
     email_template_name = "password_reset_email.html"
+    subject_template_name = "password_reset_subject.txt"
     form_class = CustomPasswordResetForm
     success_url = reverse_lazy("password_reset_done")
     success_message = "Solicitação enviada. Verifique as instruções enviadas para o seu e-mail."
+
+    def extra_email_context_value(self):
+        from django.conf import settings
+        domain = getattr(settings, "SITE_DOMAIN", "petala-livraria.onrender.com")
+        protocol = getattr(settings, "SITE_PROTOCOL", "https")
+        if self.request:
+            # If not localhost, can use host, otherwise preference goes to configured SITE_DOMAIN
+            req_host = self.request.get_host()
+            if req_host and not any(h in req_host for h in ("127.0.0.1", "localhost")):
+                domain = req_host
+            if self.request.is_secure():
+                protocol = "https"
+        return {"domain": domain, "protocol": protocol}
+
+    def form_valid(self, form):
+        opts = {
+            "use_https": getattr(self.request, "is_secure", lambda: True)(),
+            "token_generator": self.token_generator,
+            "from_email": self.from_email,
+            "email_template_name": self.email_template_name,
+            "subject_template_name": self.subject_template_name,
+            "request": self.request,
+            "html_email_template_name": self.html_email_template_name,
+            "extra_email_context": self.extra_email_context_value(),
+        }
+        try:
+            form.save(**opts)
+        except Exception as exc:
+            logger.error("Erro ao enviar e-mail de recuperação de senha: %s", exc)
+            # Não expor detalhes de SMTP ao usuário, redirecionar com mensagem segura
+        return redirect(self.get_success_url())
 
     def form_invalid(self, form):
         messages.error(self.request, "Informe um endereço de e-mail válido para recuperar o acesso.")
